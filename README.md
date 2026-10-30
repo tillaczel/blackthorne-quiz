@@ -11,15 +11,15 @@ Each question has a 60-second timer. When it runs out the slide stays put: only 
 - **Next:** Next button, right arrow, Space, Enter or Page Down (a presentation clicker works). While a question's clock runs, Next jumps it to the last 10 seconds, so the jump scare always plays. Next moves on once the scare has started.
 - **Back:** Back button, left arrow or Page Up. Going back to a question restarts its timer.
 - **Language:** the DE/EN button switches at any time, without touching the timer.
-- **Sound:** clinic ambience starts on the first tap or key press. The bars button mutes it.
+- **Sound:** clinic ambience starts on the first tap or key press. The bars button mutes it. A good subwoofer helps: every big hit has a deep sub-bass drop.
 - Press F11 for full screen. Reloading stays on the same slide; the address ends in the slide number (`#12`).
 
 ## Spooky extras
 
 - The lights cut out for a moment between slides.
 - Eyes blink in the dark, and ghosts, bats and a spider appear every 7–15 seconds. They stay behind the sheet, so they never cover a question.
-- In the last 10 seconds the room pulses red, the eyes turn red, a heartbeat plays and a shrieking noise builds. Just before zero the sound and lights cut out. At zero comes a jump scare, then a ghost pops up and shouts Boo. The bars button mutes the sound.
-- Each question has its own jump scare, 25 in all, listed in `SCARE_ORDER` at the bottom of `scares.js`. After it a ghost floats on a dark screen until the host moves on. Left arrow then shows the question again; left once more goes back a slide.
+- In the last 10 seconds each question has its own sound and small animation (`countdowns.js`, `countdowns.css`). The lights then dim, the sound fades and the room goes silent before zero.
+- At zero comes that question's own jump scare, 25 in all, listed in `SCARE_ORDER` in `scares.js`. Its last scene stays on screen until the host moves on. Left arrow then shows the question again; left once more goes back a slide. Each scare can also have a looping aftermath scene (`after-*.js`).
 - Each sheet has its own doctor's note or stamp and a faint scrawl, from `data/flavour.json`.
 
 All slides use the same sheet, so the question always starts in the same place.
@@ -29,7 +29,9 @@ All slides use the same sheet, so the question always starts in the same place.
 - `index.html` — page structure
 - `styles.css` — scene, fog, lamp flicker and slide design
 - `script.js` — slides, timer, language, sound and animations
+- `countdowns.js`, `countdowns.css` — the last 10 seconds of each question
 - `scares.js`, `scares.css` — the jump scares
+- `after-*.js`, `after-*.css` — the scenes that loop after a scare
 - `data/questions.json` — the questions and answers, in English and German
 - `data/flavour.json` — the doctor's notes, stamps and scrawls, one each per sheet
 - `data/SOURCES.md` — where the factual answers come from

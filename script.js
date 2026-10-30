@@ -15,7 +15,6 @@ const TEXT = {
     endCode: 'End of assessment',
     endTitle: 'Pens down',
     endText: 'Nobody leaves until the answers have been read.',
-    boo: 'Boo!',
     phew: 'Relax. Nothing happened.',
     doneCode: 'Assessment complete',
     start: 'Begin',
@@ -32,7 +31,6 @@ const TEXT = {
     endCode: 'Ende der Beurteilung',
     endTitle: 'Stifte weg',
     endText: 'Niemand geht, bevor die Antworten verlesen sind.',
-    boo: 'Buh!',
     phew: 'Entspannen Sie sich. Nichts passiert.',
     doneCode: 'Beurteilung abgeschlossen',
     start: 'Beginnen',
@@ -164,10 +162,7 @@ function questionSlide(text, number) {
   const { notes, scrawls } = flavour[language];
   const note = element('p', 'doctor-note', notes[number - 1]);
   const fragment = document.createDocumentFragment();
-  fragment.append(
-    sheet(formCode(text.questionOf, number), note, localized(number).question, bottom, scrawls[number - 1]),
-    bubbleGhost(text),
-  );
+  fragment.append(sheet(formCode(text.questionOf, number), note, localized(number).question, bottom, scrawls[number - 1]));
   return fragment;
 }
 
@@ -178,14 +173,6 @@ function answerSlide(text, number) {
   const stamp = element('span', 'stamp', stamps[number - 1]);
   const scrawl = scrawls[questions.length + number - 1];
   return sheet(formCode(text.answerOf, number), stamp, localized(number).question, bottom, scrawl);
-}
-
-/** The ghost behind the sheet that jumps out when time runs out. */
-function bubbleGhost(text) {
-  const ghost = element('div', 'boo');
-  ghost.innerHTML = GHOST;
-  ghost.append(element('span', 'boo-bubble', text.boo), element('p', 'boo-time', text.timeUp));
-  return ghost;
 }
 
 function render() {
@@ -491,6 +478,13 @@ function startDread(left) {
   master.gain.setValueAtTime(master.gain.value, fadeFrom);
   master.gain.linearRampToValueAtTime(0, end);
   countdown.sound(bus, seconds, now);
+  // A pressure in the room over the last seconds, felt on the subwoofer more than heard.
+  const swell = context.createGain();
+  const swellFrom = Math.max(now, end - 3.5);
+  swell.gain.setValueAtTime(0.001, swellFrom);
+  swell.gain.exponentialRampToValueAtTime(0.5, end);
+  swell.connect(bus);
+  tone(swell, { path: [[0, 36], [end - swellFrom, 29]], length: end - swellFrom, volume: 1, at: swellFrom });
   dread = { bus };
 }
 
@@ -552,7 +546,13 @@ function burst(output, length, volume, at = audio.context.currentTime) {
   noise.stop(at + length);
 }
 
-const hit = (output, at) => tone(output, { path: [[0, 140], [0.5, 36]], length: 0.6, volume: 1, at });
+/** The deep body of every big hit, made for a proper subwoofer. */
+const subDrop = (output, at, volume = 0.9) => tone(output, { path: [[0, 58], [1.4, 24]], length: 1.6, volume, at });
+
+const hit = (output, at) => {
+  tone(output, { path: [[0, 140], [0.5, 36]], length: 0.6, volume: 1, at });
+  subDrop(output, at);
+};
 
 function scream(output) {
   const pitch = randomRange(0.85, 1.2);
@@ -594,6 +594,7 @@ soundToggle.addEventListener('click', () => {
 
 const SCARES = [];
 const SCARE_LEVELS = {}; // measured volume trims, so every scare hits equally hard
+const AFTERMATHS = {}; // scare name to the html of the looping scene that follows it
 const COUNTDOWNS = [];
 let scareTimers = [];
 
@@ -609,13 +610,35 @@ function jumpScare() {
   document.body.classList.toggle('scare-fade', Boolean(scare.fadeIn));
   if (soundReady()) scare.sound(scareOutput(SCARE_LEVELS[scare.name]));
   document.body.classList.add('scare');
-  later(scare.ms, endScare);
+  later(scare.ms, () => holdScare(scare));
+}
+
+/** After the scare its aftermath loops until the host moves on. */
+function holdScare(scare) {
+  const aftermath = AFTERMATHS[scare.name];
+  if (aftermath) {
+    jumpScareNode.className = `jump-scare after-${scare.name}`;
+    jumpScareNode.innerHTML = aftermath(TEXT[language]);
+    document.body.classList.remove('scare');
+    document.body.classList.add('hold', 'aftermath');
+    return;
+  }
+  jumpScareNode.className = 'jump-scare';
+  void jumpScareNode.offsetWidth; // restarts its animations
+  jumpScareNode.className = `jump-scare scare-${scare.name}`;
+  jumpScareNode.innerHTML = scare.html(TEXT[language]);
+  document.body.classList.add('hold');
+  jumpScareNode.getAnimations({ subtree: true }).forEach((animation) => {
+    animation.pause();
+    animation.currentTime = scare.holdAt ?? scare.ms * 0.7;
+  });
+  requestAnimationFrame(() => document.body.classList.add('creep'));
 }
 
 function endScare() {
   scareTimers.forEach(clearTimeout);
   scareTimers = [];
-  document.body.classList.remove('scare');
+  document.body.classList.remove('scare', 'hold', 'creep', 'aftermath');
 }
 
 // ---- Start
