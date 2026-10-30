@@ -7,7 +7,7 @@ const LANGUAGE_KEY = 'blackthorne-quiz-language';
 const TEXT = {
   en: {
     case: 'Patient assessment · Case 7713-A',
-    summons: 'Pens ready. Estimate boldly: the closest answer wins.',
+    summons: 'Pens ready. Write your answers on your form.',
     tagline: 'Side effects may include screaming.',
     questionOf: (n, total) => `Question ${n} of ${total}`,
     answerOf: (n, total) => `Answer ${n} of ${total}`,
@@ -23,7 +23,7 @@ const TEXT = {
   },
   de: {
     case: 'Patientenbeurteilung · Akte 7713-A',
-    summons: 'Stifte bereit. Schätzen Sie mutig: Die nächste Antwort gewinnt.',
+    summons: 'Stifte bereit. Schreiben Sie Ihre Antworten auf Ihr Formular.',
     tagline: 'Zu den Nebenwirkungen zählt Schreien.',
     questionOf: (n, total) => `Frage ${n} von ${total}`,
     answerOf: (n, total) => `Antwort ${n} von ${total}`,

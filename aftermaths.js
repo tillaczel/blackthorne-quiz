@@ -1,48 +1,29 @@
 // The scene each scare leaves behind, looping until the host moves on. Loaded after scares.js.
 
-// Aftermath scenes, group a: gurney, invoice, lights, syringe, duck, cctv, eye, xray
+// Aftermath scenes, group a: crawler, invoice, lights, syringe, duck, cctv, eye, xray
 {
   const pick = (en, de) => (language === 'de' ? de : en);
   const svg = (inner) => `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" aria-hidden="true">${inner}</svg>`;
 
-  // ---- gurney: empty hallway, tipped gurney, one wheel still turning
-  AFTERMATHS.gurney = () => {
-    const wheel = (x, spin, cls = '') => `<g transform="translate(${x} 128)"><circle r="30" fill="#14181a" stroke="#3a4144" stroke-width="5"/>
-      <g class="${spin ? 'gurney-spin' : ''}"><circle r="22" fill="none" stroke="#7d8588" stroke-width="3"/><path d="M-22 0H22M0-22V22M-15-15L15 15M15-15L-15 15" stroke="#9aa1a3" stroke-width="3"/><circle r="6" fill="#c9cfd0"/></g></g>`;
-    const doors = [0, 1, 2, 3].map((i) => {
-      const x = 90 + i * 150;
-      return `<path d="M${x} ${330 + i * 14}V${650 - i * 22}L${x + 100} ${620 - i * 30}V${355 + i * 12}z" fill="#10171a" stroke="#27323a" stroke-width="4"/>
-              <path d="M${1510 - i * 150} ${330 + i * 14}V${650 - i * 22}L${1410 - i * 150} ${620 - i * 30}V${355 + i * 12}z" fill="#10171a" stroke="#27323a" stroke-width="4"/>`;
-    }).join('');
-    return svg(`<defs>
-      <linearGradient id="aa-g-wall" x1="0" x2="1"><stop offset="0" stop-color="#0b1013"/><stop offset=".5" stop-color="#1d292e"/><stop offset="1" stop-color="#0b1013"/></linearGradient>
-      <linearGradient id="aa-g-floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a2327"/><stop offset="1" stop-color="#05080a"/></linearGradient>
-      <radialGradient id="aa-g-light" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#d8f0e4" stop-opacity=".55"/><stop offset="1" stop-color="#d8f0e4" stop-opacity="0"/></radialGradient>
-    </defs>
-    <rect width="1600" height="900" fill="#070b0d"/>
-    <path d="M0 0H1600V900H0z" fill="url(#aa-g-wall)"/>
-    <path d="M0 0L700 330H900L1600 0z" fill="#0a1013"/>
-    <path d="M0 900L700 450H900L1600 900z" fill="url(#aa-g-floor)"/>
-    <rect x="700" y="330" width="200" height="120" fill="#0d1519"/>
-    <g opacity=".9">${doors}</g>
-    <path d="M60 760L700 450M1540 760L900 450" stroke="#2b373d" stroke-width="3" opacity=".6"/>
-    <g class="gurney-lamp"><rect x="740" y="60" width="120" height="14" rx="6" fill="#cfd8d4"/><ellipse cx="800" cy="120" rx="360" ry="260" fill="url(#aa-g-light)"/></g>
-    <ellipse class="gurney-pool" cx="800" cy="640" rx="520" ry="110" fill="#bfe5d6" opacity=".12"/>
-    <g class="gurney-sheet"><path d="M560 705C650 735 760 690 860 730S1050 760 1160 735C1090 782 960 786 860 770S660 790 540 745z" fill="#c9cdc2" opacity=".9"/><path d="M640 735C740 740 860 725 960 750" stroke="#8d9288" stroke-width="3" fill="none"/></g>
-    <ellipse cx="430" cy="768" rx="330" ry="26" fill="#000" opacity=".5"/>
-    <g transform="translate(430 640) rotate(166)">
-      <rect x="-280" y="-64" width="560" height="52" rx="10" fill="#d9dccf"/>
-      <rect x="-280" y="-14" width="560" height="12" fill="#6e777a"/>
-      <path d="M-280 -12V-26" stroke="#bbb" stroke-width="2"/>
-      <path d="M-210 -2V128M210 -2V128M-110 -2V128M110 -2V128" stroke="#59646a" stroke-width="10"/>
-      ${wheel(-210, false)}${wheel(-110, true)}${wheel(110, false)}${wheel(210, false)}
+  // The thing never left: it hangs from the ceiling and watches.
+  AFTERMATHS.crawler = () => `<svg class="after-crawler-art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs><radialGradient id="afterCrawlerWall" cx=".5" cy=".6" r=".72"><stop offset="0" stop-color="#5d6655"/><stop offset=".55" stop-color="#262c23"/><stop offset="1" stop-color="#090b08"/></radialGradient></defs>
+    <rect width="1600" height="900" fill="url(#afterCrawlerWall)"/>
+    <path d="M0 700H1600M0 712H1600" stroke="#141812" stroke-width="5"/>
+    <g class="after-crawler-thing">
+      <path class="after-crawler-limb after-crawler-limb0" d="M742 -10L590 120L500 60L392 250L320 214L262 430"/><path class="after-crawler-limb after-crawler-limb1" d="M700 -10L470 60L380 10L250 150L170 110L120 300"/><path class="after-crawler-limb after-crawler-limb2" d="M858 -10L1010 120L1100 60L1208 250L1280 214L1338 430"/><path class="after-crawler-limb after-crawler-limb3" d="M900 -10L1130 60L1220 10L1350 150L1430 110L1480 300"/>
+      <path d="M740 -20Q800 110 860 -20z" fill="#040504"/>
+      <g class="after-crawler-head">
+        <path d="M748 60C744 150 772 214 800 214C828 214 856 150 852 60C844 24 756 24 748 60z" fill="#d3d6c6"/>
+        <path d="M744 60C736 8 864 8 856 60C840 30 760 30 744 60z" fill="#040504"/>
+        <ellipse class="after-crawler-eye" cx="774" cy="136" rx="17" ry="24" fill="#050605"/>
+        <ellipse class="after-crawler-eye" cx="826" cy="136" rx="17" ry="24" fill="#050605"/>
+        <path d="M780 76Q800 50 820 76Q812 98 800 98Q788 98 780 76z" fill="#050605"/>
+      </g>
     </g>
-    <g class="gurney-sheet2"><path d="M470 770C400 795 330 790 260 812C340 830 440 820 520 790z" fill="#c9cdc2" opacity=".85"/></g>
-    <rect class="gurney-dim" width="1600" height="900" fill="#02070a"/>
-    <rect width="1600" height="900" fill="url(#aa-vig)"/>`).replace('</defs>', '<radialGradient id="aa-vig" cx=".5" cy=".5" r=".75"><stop offset=".45" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".85"/></radialGradient></defs>');
-  };
+    <rect class="after-crawler-dim" width="1600" height="900" fill="#000"/>
+  </svg>`;
 
-  // ---- invoice: pinned to a dark wall, swaying, stamp pulsing, bare bulb
   AFTERMATHS.invoice = () => {
     const rows = [
       [pick('Fright treatment', 'Schreckbehandlung'), 'CHF 450.--'],

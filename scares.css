@@ -246,20 +246,6 @@ body.scare:has(.scare-rip) #slide .sheet{visibility:hidden}
 @keyframes syringe-shake{0%{transform:translate(0)}20%{transform:translate(-1.2%,.8%)}40%{transform:translate(1%,-.8%)}60%{transform:translate(-.6%,.5%)}80%{transform:translate(.4%,-.3%)}100%{transform:none}}
 @keyframes syringe-wash{to{opacity:.8}}
 @keyframes syringe-out{to{opacity:0}}
-.scare-gurney{background:#000}
-.gurney-hall,.gurney-cart,.gurney-dark{position:absolute;inset:0;width:100%;height:100%}
-.gurney-hall{animation:gurney-rumble .2s linear infinite,gurney-gone .01s steps(1) 1.98s forwards}
-.gurney-cart{transform-origin:50% 47.8%;transform:scale(.03);animation:gurney-rush 1.98s linear forwards,gurney-gone .01s steps(1) 1.98s forwards}
-.gurney-dark{background:radial-gradient(ellipse at 50% 46%,transparent 30%,rgba(0,0,0,.75) 100%);animation:gurney-gone .01s steps(1) 1.98s forwards}
-.gurney-lamp{animation:gurney-flicker 1.98s steps(1) forwards}
-.gurney-arm{opacity:0;transform-box:view-box;transform-origin:110px 610px;animation:gurney-shoot .08s steps(3) 1.54s forwards}
-.gurney-grab{position:absolute;inset:0;width:100%;height:100%;visibility:hidden;transform-origin:50% 42%;animation:gurney-grab .36s cubic-bezier(.7,0,.9,.5) 1.62s forwards,gurney-gone .01s steps(1) 1.98s forwards}
-@keyframes gurney-shoot{0%{opacity:1;transform:scale(.1)}100%{opacity:1;transform:none}}
-@keyframes gurney-grab{0%{visibility:visible;transform:translate(0,-10%) scale(.06)}100%{visibility:visible;transform:translate(0,4%) scale(2)}}
-@keyframes gurney-flicker{0%{opacity:1}22%{opacity:.35}27%{opacity:1}58%{opacity:.3}63%{opacity:1}}
-@keyframes gurney-rumble{0%{transform:translateY(0)}50%{transform:translateY(1px)}100%{transform:translateY(0)}}
-@keyframes gurney-gone{to{visibility:hidden}}
-@keyframes gurney-rush{0%{transform:scale(0.030)}4%{transform:scale(0.036)}8%{transform:scale(0.042)}12%{transform:scale(0.050)}16%{transform:scale(0.060)}20%{transform:scale(0.071)}24%{transform:scale(0.084)}28%{transform:scale(0.100)}32%{transform:scale(0.119)}36%{transform:scale(0.141)}40%{transform:scale(0.167)}44%{transform:scale(0.199)}48%{transform:scale(0.236)}52%{transform:scale(0.280)}56%{transform:scale(0.333)}60%{transform:scale(0.395)}64%{transform:scale(0.469)}68%{transform:scale(0.557)}72%{transform:scale(0.662)}76%{transform:scale(0.786)}80%{transform:scale(0.933)}84%{transform:scale(1.108)}88%{transform:scale(1.316)}92%{transform:scale(1.563)}96%{transform:scale(1.856)}100%{transform:scale(2.203)}}
 .scare-surgeon{background:#020304}
 .surgeon-scene,.surgeon-shade,.surgeon-flash{position:absolute;inset:0;width:100%;height:100%}
 .surgeon-scene{animation:surgeon-out .3s linear 2.7s forwards}

@@ -906,7 +906,7 @@ SCARES.push(
     },
   });
 
-  // ---- gurney: a corridor in one-point perspective and a sprite that grows toward us.
+  // ---- corridor drawing, shared with cctv
   const corridor = (LAMP = 5.5, gain = 1) => {
     const VX = 800;
     const VY = 430;
@@ -956,65 +956,6 @@ SCARES.push(
         <radialGradient id="gurneyPool"><stop offset="0" stop-color="#eef0d0" stop-opacity=".45"/><stop offset="1" stop-color="#eef0d0" stop-opacity="0"/></radialGradient>
       </defs>${out}${flick}`;
   };
-
-  const gurneySprite = () => {
-    const L = '#3c4240';
-    const stain = (x, y, r, fill = '#4a1410', o = 0.9) => `<path d="${blobPath(x, y, r, 0.1, true)}" fill="${fill}" opacity="${o}"/>`;
-    const folds = [[-150, 590, -120, 530], [-60, 600, -50, 520], [30, 596, 40, 522], [110, 596, 125, 530], [165, 600, 150, 548]]
-      .map(([x1, y1, x2, y2]) => `<path d="M${x1} ${y1}Q${(x1 + x2) / 2 + rand(-12, 12)} ${(y1 + y2) / 2} ${x2} ${y2}" stroke="#6e7064" stroke-width="5" fill="none" opacity=".8"/>`).join('');
-    return `<defs>${GHOUL_DEFS}
-        <linearGradient id="gurneySheet" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9b8a9"/><stop offset=".6" stop-color="#85867a"/><stop offset="1" stop-color="#3f4139"/></linearGradient>
-        <linearGradient id="gurneySkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dfe2d3"/><stop offset="1" stop-color="#8f9486"/></linearGradient>
-      </defs>
-      <g transform="translate(800 0)">
-      <!-- frame and wheels -->
-      <path d="M-165 600V805M165 600V805M-165 700H165M-165 760H165" stroke="${L}" stroke-width="14" fill="none"/>
-      <path d="M-165 600V805M165 600V805" stroke="#6c7471" stroke-width="3" fill="none" transform="translate(-4 0)"/>
-      <circle cx="-165" cy="808" r="22" fill="#0d0f0e"/><circle cx="165" cy="808" r="22" fill="#0d0f0e"/>
-      <circle cx="-165" cy="808" r="8" fill="#555c59"/><circle cx="165" cy="808" r="8" fill="#555c59"/>
-      <rect x="-190" y="602" width="380" height="14" fill="#262a29"/>
-      <!-- mattress -->
-      <path d="M-182 566L-72 474H72L182 566V604H-182z" fill="#585646"/>
-      <path d="M-182 566L-72 474H72L182 566z" fill="#6d6b57"/>
-      <!-- the sheeted body: far hump, near feet, hanging hem -->
-      <path d="M-98 520Q-100 462 -62 452Q0 440 62 452Q100 462 98 520z" fill="#a9aa9c"/>
-      <g class="gurney-arm"><path d="M70 610L150 590L60 330L20 350z" fill="#c9cabb" stroke="#1a1a16" stroke-width="5"/><path d="M45 360L70 340M70 440L100 430" stroke="#6b6c5e" stroke-width="4"/></g>
-      <path d="M-182 614L-176 562Q-150 510 -104 508Q-60 508 -12 530Q40 506 104 508Q152 510 176 562L182 614Q166 606 150 622Q130 610 110 620Q88 606 66 622Q48 610 30 626Q12 608 -10 622Q-30 608 -52 624Q-74 608 -92 624Q-116 610 -136 622Q-162 610 -182 614z" fill="url(#gurneySheet)"/>
-      ${folds}
-      ${stain(-70, 560, 34)}${stain(60, 540, 26, '#4c140f')}${stain(-115, 590, 16, '#6a2a1c', 0.7)}${stain(125, 585, 20, '#5b1a14', 0.7)}
-      <path d="M-42 566v54M70 584v36" stroke="#4a130f" stroke-width="6" stroke-linecap="round" opacity=".8"/>
-      </g>
-      <path d="M-150 566Q-80 510 0 520Q80 510 150 566L160 604L-160 604z" fill="url(#gurneySheet)" opacity=".0"/>
-      </g>`;
-  };
-
-  SCARES.push({
-    name: 'gurney',
-    ms: 2500,
-    html: () => `<svg class="gurney-hall" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${corridor()}</svg>
-      <svg class="gurney-cart" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${gurneySprite()}</svg>
-      <div class="gurney-dark"></div>
-      <svg class="gurney-grab" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <g fill="none" stroke-linecap="round" stroke-linejoin="round"><g stroke="#000" stroke-width="112"><path d="M640 470L540 220L505 90"/><path d="M745 440L700 150L685 0"/><path d="M850 440L875 140L895 -10"/><path d="M950 470L1040 210L1090 70"/><path d="M590 600L450 570L360 470"/></g><g stroke="#d3d4c4" stroke-width="84"><path d="M640 470L540 220L505 90"/><path d="M745 440L700 150L685 0"/><path d="M850 440L875 140L895 -10"/><path d="M950 470L1040 210L1090 70"/><path d="M590 600L450 570L360 470"/></g></g>
-        <g fill="#d3d4c4" stroke="#000" stroke-width="8"><circle cx="540" cy="220" r="22"/><circle cx="700" cy="150" r="22"/><circle cx="875" cy="140" r="22"/><circle cx="1040" cy="210" r="22"/></g>
-        <path d="M600 540Q590 420 700 410H900Q1010 420 1000 540L1020 700Q1030 830 940 890H660Q570 830 580 700z" fill="#d3d4c4" stroke="#000" stroke-width="12"/>
-        <path d="M670 600Q800 650 930 600M660 700Q800 750 940 700" fill="none" stroke="#7d7e6e" stroke-width="7" stroke-linecap="round"/>
-        <g fill="#000"><path d="M530 83L474 -26L480 97z"/><path d="M711 -3L673 -119L659 3z"/><path d="M921 -7L911 -129L869 -13z"/><path d="M1114 79L1130 -43L1066 61z"/><path d="M379 453L280 381L341 487z"/></g></svg>`,
-    sound: (output) => {
-      note(output, { type: 'sawtooth', path: [[0, 38], [1.95, 70]], length: 2, volume: 0.25, wobble: [7, 60] });
-      rush(output, { type: 'lowpass', path: [[0, 160], [1.9, 700]], length: 2, volume: 0.4, attack: 0.05, hold: 0.9 });
-      for (let i = 0; i < 90; i += 1) {
-        const t = 1.95 * (i / 90) ** 0.75;
-        burst(output, 0.035, 0.08 + 0.35 * (t / 1.95), audio.context.currentTime + t + rand(0, 0.015));
-      }
-      [0.05, 0.55, 1.1, 1.5].forEach((s, i) => note(output, { type: 'sine', path: [[0, 2100 + i * 120], [0.22, 2650], [0.45, 2250]], length: 0.46, volume: 0.07 + i * 0.03, wobble: [9, 40] }, s));
-      rush(output, { type: 'bandpass', path: [[0, 500], [0.22, 3800]], q: 0.9, length: 0.3, volume: 0.9, start: 1.52, attack: 0.02, hold: 0.7 });
-      note(output, { type: 'sawtooth', path: [[0, 140], [0.28, 520]], length: 0.3, volume: 0.1, wobble: [40, 120] }, 1.52);
-      thud(output, 1.55, 0.5);
-      thud(output, 1.98, 1);
-      burst(output, 0.35, 0.9, audio.context.currentTime + 1.98);
-    },
-  });
 
   // ---- bedsheet: an iron bed, a sheet, a breath.
   const wardRoom = () => {
@@ -1439,7 +1380,7 @@ SCARES.push(
 
 // One scare per question, mixing the frightening with the silly. Pouring blood closes the assessment.
 const SCARE_ORDER = [
-  'gurney', 'invoice', 'lights', 'syringe', 'duck',
+  'crawler', 'invoice', 'lights', 'syringe', 'duck',
   'cctv', 'eye', 'xray', 'mirror', 'rip',
   'file', 'surgeon', 'teeth', 'phew', 'crash',
   'door', 'cat', 'belly', 'elevator', 'flatline',
@@ -1873,8 +1814,6 @@ const SCARE_ORDER = [
   });
 
   // ---- crawler: a long-limbed black thing scuttles across the sheet, stops dead in the middle and looks round.
-  // Not in SCARE_ORDER: it waits in window.SPARE_SCARES (the order step below keeps SCARES at exactly the 25 ordered ones).
-  window.SPARE_SCARES = window.SPARE_SCARES || [];
   {
     const poseSeed = (() => { let s = 7; return () => { s = (s * 16807) % 2147483647; return s / 2147483647; }; })();
     const jit = (a) => (poseSeed() * 2 - 1) * a;
@@ -2035,7 +1974,7 @@ const SCARE_ORDER = [
       return out;
     };
 
-    SPARE_SCARES.push({
+    SCARES.push({
       name: 'crawler',
       ms: END_MS + 60,
       html: () => `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true" fill="#000">${buildCrawler()}</svg>`,
@@ -2070,12 +2009,12 @@ const SCARE_ORDER = [
 }
 
 // These open on a scene, so they rise out of the dark. The others strike at once.
-const SCARE_FADE_IN = ['gurney', 'lights', 'cctv', 'xray', 'mirror', 'cat', 'belly', 'elevator', 'flatline', 'morgue', 'wheelchair', 'phew'];
+const SCARE_FADE_IN = ['crawler', 'lights', 'cctv', 'xray', 'mirror', 'cat', 'belly', 'elevator', 'flatline', 'morgue', 'wheelchair', 'phew'];
 SCARES.forEach((scare) => { scare.fadeIn = SCARE_FADE_IN.includes(scare.name); });
 
 // Measured trims, so every scare hits equally hard.
 Object.assign(SCARE_LEVELS, {
-  gurney: 0.57, invoice: 1.12, lights: 0.55, syringe: 0.84, duck: 2.23,
+  crawler: 0.6, invoice: 1.12, lights: 0.55, syringe: 0.84, duck: 2.23,
   cctv: 0.7, eye: 0.75, xray: 0.62, mirror: 0.52, rip: 0.74,
   file: 0.69, surgeon: 0.8, teeth: 0.99, phew: 0.64, crash: 0.64,
   door: 0.67, cat: 0.66, belly: 0.63, elevator: 0.56, flatline: 0.68,

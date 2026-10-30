@@ -1,18 +1,5 @@
 /* Aftermath scenes, group a */
-.after-gurney svg, .after-invoice svg, .after-lights svg, .after-syringe svg, .after-duck svg, .after-eye svg, .after-xray svg { display: block; }
 
-/* ---- gurney */
-.after-gurney .gurney-spin { transform-box: fill-box; transform-origin: center; animation: after-gurney-spin 5.3s linear infinite; }
-.after-gurney .gurney-dim { opacity: .1; animation: after-gurney-flick 7.3s linear infinite; }
-.after-gurney .gurney-lamp { animation: after-gurney-lamp 7.3s linear infinite; }
-.after-gurney .gurney-pool { animation: after-gurney-pool 11.3s ease-in-out infinite; }
-.after-gurney .gurney-sheet { transform-origin: 560px 740px; animation: after-gurney-sheet 6.1s ease-in-out infinite alternate; }
-.after-gurney .gurney-sheet2 { transform-origin: 500px 780px; animation: after-gurney-sheet 8.9s ease-in-out infinite alternate-reverse; }
-@keyframes after-gurney-spin { to { transform: rotate(-360deg); } }
-@keyframes after-gurney-flick { 0%, 38%, 44%, 71%, 74%, 100% { opacity: .1; } 39% { opacity: .6; } 40% { opacity: .15; } 41% { opacity: .7; } 42% { opacity: .2; } 72% { opacity: .75; } 73% { opacity: .3; } }
-@keyframes after-gurney-lamp { 0%, 38%, 44%, 71%, 74%, 100% { opacity: 1; } 39% { opacity: .5; } 41% { opacity: .4; } 72% { opacity: .35; } }
-@keyframes after-gurney-pool { 0%, 100% { opacity: .1; } 50% { opacity: .15; } }
-@keyframes after-gurney-sheet { from { transform: skewY(-.8deg) scaleX(1); } to { transform: skewY(.9deg) scaleX(1.015); } }
 
 /* ---- invoice */
 .after-invoice .invoice-paper { transform-origin: 300px 22px; animation: after-invoice-sway 6.3s ease-in-out infinite alternate; }
@@ -372,3 +359,16 @@
 @keyframes after-blood-fall{0%{transform:translateY(calc(var(--L) * -1px))}100%{transform:translateY(0)}}
 @keyframes after-blood-pulse{0%,100%{opacity:.72}50%{opacity:1}}
 @keyframes after-blood-dim{0%,100%,40%,75%{opacity:0}41%{opacity:.3}42.5%{opacity:0}76%{opacity:.2}77%{opacity:0}}
+.after-crawler-art{position:absolute;inset:0;width:100%;height:100%}
+.after-crawler-limb{fill:none;stroke:#040504;stroke-width:15;stroke-linejoin:miter;stroke-linecap:round}
+.after-crawler-thing{animation:after-crawler-sway 9.1s ease-in-out infinite}
+.after-crawler-limb{transform-origin:800px 0;animation:after-crawler-twitch 11.3s steps(1) infinite}
+.after-crawler-limb1,.after-crawler-limb3{animation-delay:-4.1s}
+.after-crawler-head{transform-origin:800px 60px;animation:after-crawler-tilt 13.7s steps(1) infinite}
+.after-crawler-eye{transform-box:fill-box;transform-origin:center;animation:after-crawler-blink 6.1s steps(1) infinite}
+.after-crawler-dim{opacity:0;animation:after-crawler-flicker 7.9s steps(1) infinite}
+@keyframes after-crawler-sway{0%,100%{transform:translateY(-8px)}50%{transform:translateY(12px)}}
+@keyframes after-crawler-twitch{0%,100%{transform:none}62%{transform:rotate(1.2deg)}63%{transform:rotate(-.8deg)}65%{transform:none}}
+@keyframes after-crawler-tilt{0%,44%{transform:rotate(0)}45%,71%{transform:rotate(16deg)}72%,100%{transform:rotate(0)}}
+@keyframes after-crawler-blink{0%,92%,100%{transform:none}93%,95%{transform:scaleY(.08)}}
+@keyframes after-crawler-flicker{0%,70%,100%{opacity:0}71%{opacity:.55}73%{opacity:.1}74%{opacity:.65}77%{opacity:0}}
