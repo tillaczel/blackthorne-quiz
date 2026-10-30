@@ -14,6 +14,15 @@ Each question has a 60-second timer. When it runs out the slide stays put: only 
 - **Sound:** clinic ambience starts on the first tap or key press. The bars button mutes it.
 - Press F11 for full screen. Reloading stays on the same slide; the address ends in the slide number (`#12`).
 
+## Spooky extras
+
+- The lights cut out for a moment between slides.
+- Eyes blink in the dark, and ghosts, bats and a spider appear every 7–15 seconds. They stay behind the sheet, so they never cover a question.
+- In the last 10 seconds the room pulses red, the eyes turn red and a heartbeat plays. At zero a ghost jumps out and shouts Boo.
+- Each sheet has a doctor's note or a stamp, and a faint scrawl. These lists are at the top of `script.js`.
+
+All slides use the same sheet, so the question always starts in the same place.
+
 ## Included files
 
 - `index.html` — page structure
