@@ -76,6 +76,7 @@ let flavour = {};
 let language = store.get(LANGUAGE_KEY) === 'de' ? 'de' : 'en';
 let current = 0;
 let countdown = null;
+let endsAt = 0;
 let timeLeft = 0;
 let lastSecond = null;
 let reviewing = false;
@@ -236,7 +237,7 @@ function showTime(left) {
 
 /** Counts down and stops at zero. It never moves to the next slide. */
 function startCountdown() {
-  const endsAt = Date.now() + QUESTION_SECONDS * 1000;
+  endsAt = Date.now() + QUESTION_SECONDS * 1000;
   const tick = () => {
     const left = Math.max(0, endsAt - Date.now());
     showTime(left);
@@ -287,8 +288,14 @@ function goBack() {
   document.body.classList.remove('time-up');
 }
 
+/** Next never skips a running clock: it cuts to the last seconds, so the scare still plays. */
+function goNext() {
+  if (!countdown) return goTo(current + 1);
+  endsAt = Math.min(endsAt, Date.now() + LOW_SECONDS * 1000);
+}
+
 backButton.addEventListener('click', goBack);
-nextButton.addEventListener('click', () => goTo(current + 1));
+nextButton.addEventListener('click', goNext);
 languageToggle.addEventListener('click', () => setLanguage(language === 'en' ? 'de' : 'en'));
 
 document.addEventListener('keydown', (event) => {
@@ -296,7 +303,7 @@ document.addEventListener('keydown', (event) => {
   if (event.target.closest('button') && event.key === ' ') event.target.blur();
   if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(event.key)) {
     event.preventDefault();
-    goTo(current + 1);
+    goNext();
   } else if (['ArrowLeft', 'PageUp'].includes(event.key)) {
     event.preventDefault();
     goBack();

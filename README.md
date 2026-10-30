@@ -8,7 +8,7 @@ Each question has a 60-second timer. When it runs out the slide stays put: only 
 
 ## Running the quiz
 
-- **Next:** Next button, right arrow, Space, Enter or Page Down (a presentation clicker works).
+- **Next:** Next button, right arrow, Space, Enter or Page Down (a presentation clicker works). While a question's clock runs, Next jumps it to the last 10 seconds, so the jump scare always plays. Next moves on once the scare has started.
 - **Back:** Back button, left arrow or Page Up. Going back to a question restarts its timer.
 - **Language:** the DE/EN button switches at any time, without touching the timer.
 - **Sound:** clinic ambience starts on the first tap or key press. The bars button mutes it.
