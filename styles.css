@@ -55,8 +55,7 @@ h1{margin:0;color:var(--paper);font-size:clamp(46px,min(8vw,15vh),190px);font-we
 .timer-fill{height:100%;background:var(--red);transform-origin:left}
 .answer{margin:0;color:var(--red);font-size:clamp(28px,min(4.6vw,8vh),150px);font-weight:700;line-height:1;animation:answer-in .5s ease-out}
 
-body.low-time .clock{color:var(--red);animation:clock-shake .24s linear infinite}
-body.low-time .scene::before{content:"";position:absolute;inset:0;z-index:5;background:radial-gradient(ellipse at center,transparent 42%,rgba(150,12,8,.62));animation:heartbeat 1s ease-in-out infinite}
+body.low-time .clock{color:var(--red)}
 body.time-up .clock{color:var(--red)}
 body.low-time .eyes i,body.time-up .eyes i{background:#ff3b2c;box-shadow:0 0 16px 5px rgba(255,40,24,.75)}
 
@@ -87,7 +86,8 @@ body.time-up:not(.scare) .boo svg{animation:boo-glow 1.6s ease-in-out infinite a
 
 .blackout{position:fixed;inset:0;z-index:9;background:#000;opacity:0;pointer-events:none}
 .blackout.flash{animation:lights-out .42s linear}
-body.hush .blackout{opacity:1}
+body.hush .blackout{opacity:1;transition:opacity .85s ease-in}
+body.scare-fade .blackout{transition:opacity .4s ease-out}
 .jump-scare{position:fixed;inset:0;z-index:8;display:none;place-items:center;overflow:hidden;pointer-events:none}
 body.scare .jump-scare{display:grid}
 .jump-scare svg{display:block}

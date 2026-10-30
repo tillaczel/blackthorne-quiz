@@ -1,0 +1,141 @@
+/* Later jump scares: xray, mirror, elevator, morgue, cat, belly. Every class and keyframe starts with the scare's name. */
+
+/* ---- xray */
+.scare-xray{background:radial-gradient(ellipse at 50% 45%,#0b1118,#020305 72%);animation:xray-out .3s linear 3.1s forwards}
+.xray-box{position:relative;height:82vh;aspect-ratio:400/520;animation:xray-on 1.2s linear both}
+.xray-panel{position:absolute;inset:-3vh;background:#e6f3ff;border:1.2vh solid #1b1f25;box-shadow:0 0 10vh #7fb4e8,0 0 28vh #2d5d92}
+.xray-film{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.xray-profile{transform-box:view-box;transform-origin:200px 110px;animation:xray-profile-turn .6s ease-in-out 1.75s forwards}
+.xray-front{transform-box:view-box;transform-origin:200px 110px;opacity:0;scale:.02 1;animation:xray-front-turn .6s ease-in-out 2s forwards,xray-lunge .3s cubic-bezier(.6,0,1,.5) 2.55s forwards}
+.xray-jaw{transform-box:view-box;transform-origin:200px 140px;animation:xray-jaw .12s ease-in 2.4s forwards}
+.xray-flash{position:absolute;inset:0;background:#cfe6ff;opacity:0;animation:xray-flash .22s linear 2.55s}
+@keyframes xray-on{0%{opacity:0}15%{opacity:.55}32%{opacity:.1}60%{opacity:.8}80%{opacity:.5}100%{opacity:1}}
+@keyframes xray-profile-turn{to{scale:.02 1}}
+@keyframes xray-front-turn{from{opacity:1;scale:.02 1}to{opacity:1;scale:1 1}}
+@keyframes xray-jaw{to{transform:translateY(20px)}}
+@keyframes xray-lunge{from{opacity:1}to{opacity:1;transform:scale(9)}}
+@keyframes xray-flash{0%{opacity:.85}100%{opacity:0}}
+@keyframes xray-out{to{opacity:0}}
+
+/* ---- mirror */
+.scare-mirror{background:#0b1210;animation:mirror-out .3s linear 3.2s forwards}
+.mirror-tiles{position:absolute;inset:0;width:100%;height:100%;filter:brightness(.38) saturate(.8)}
+.mirror-glass{position:absolute;left:50%;top:46%;width:min(66vw,118vh);height:66vh;translate:-50% -54%;border:1.4vh solid #94a2a4;box-shadow:0 0 0 .5vh #2b3436,0 2vh 6vh #000;overflow:hidden;background:#1d2a2f;animation:mirror-shake .35s linear 2.85s}
+.mirror-reflection{position:absolute;inset:0;background:linear-gradient(180deg,#3e4f55,#1b282d)}
+.mirror-light{position:absolute;left:50%;top:-10%;width:60%;height:55%;translate:-50% 0;background:radial-gradient(ellipse,#a9c4c966,transparent 70%)}
+.mirror-fog{position:absolute;inset:0;background:radial-gradient(ellipse at 40% 30%,#a9bbb9ea,#6f8484dd);opacity:0;animation:mirror-fog .9s ease-out forwards}
+.mirror-figure{position:absolute;left:62%;bottom:-2%;height:92%;translate:-50% 0;visibility:hidden;filter:blur(1.2px);animation:mirror-appear .01s linear 2.5s forwards}
+.mirror-words{position:absolute;left:50%;top:30%;width:80%;translate:-50% 0;overflow:visible;filter:drop-shadow(0 0 .4vh #ffffff88)}
+.mirror-words path{stroke:#0a1316;stroke-width:2.4;stroke-dasharray:1;stroke-dashoffset:1;animation-name:mirror-write;animation-timing-function:linear;animation-fill-mode:forwards}
+.mirror-crack{position:absolute;inset:0;width:100%;height:100%}
+.mirror-crack path{stroke:#fff;stroke-width:5;stroke-dasharray:1;stroke-dashoffset:1;filter:drop-shadow(2px 2px 0 #000);animation:mirror-write .1s linear calc(2.85s + var(--i) * .008s) forwards}
+.mirror-tap{position:absolute;left:50%;bottom:1.5vh;width:15vh;translate:-50% 0}
+.mirror-drop{animation:mirror-drip .5s ease-in .2s 6 both}
+.mirror-flash{position:absolute;inset:0;background:#fff;opacity:0;animation:mirror-flash .14s linear 2.85s}
+@keyframes mirror-fog{to{opacity:1}}
+@keyframes mirror-write{to{stroke-dashoffset:0}}
+@keyframes mirror-appear{to{visibility:visible}}
+@keyframes mirror-drip{0%{transform:translateY(-6px) scale(.2);opacity:1}30%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(95px) scale(.8);opacity:0}}
+@keyframes mirror-shake{0%,100%{translate:-50% -54%}20%{translate:calc(-50% - 1vh) calc(-54% + .6vh)}45%{translate:calc(-50% + 1vh) calc(-54% - .8vh)}70%{translate:calc(-50% - .5vh) calc(-54% + .4vh)}}
+@keyframes mirror-flash{0%{opacity:.8}100%{opacity:0}}
+@keyframes mirror-out{to{opacity:0}}
+
+/* ---- elevator */
+.scare-elevator{background:#000;animation:elevator-out .3s linear 3.2s forwards}
+.elevator-car{position:absolute;inset:0;background:repeating-linear-gradient(90deg,#26231f 0 6px,#2e2a25 6px 9px);animation:elevator-shake .3s linear 3.17s}
+.elevator-plate{position:absolute;left:50%;top:4.5vh;translate:-50% 0;display:flex;gap:1vh;padding:1.4vh 2.4vh;background:linear-gradient(#d3ab52,#8b6a24);border:.6vh solid #3f2d0c;border-radius:1vh;box-shadow:0 1vh 3vh #000}
+.elevator-floor{min-width:8.5vh;padding:.6vh 0;text-align:center;font:700 5vh/1 Georgia,'Times New Roman',serif;color:#5b4413;background:#00000022;border-radius:.6vh;animation-name:elevator-lit;animation-timing-function:linear;animation-fill-mode:forwards}
+.elevator-last{animation-name:elevator-last}
+.elevator-shaft{position:absolute;left:50%;top:21vh;translate:-50% 0;width:min(72vw,100vh);height:79vh;overflow:hidden;border:1.2vh solid #55534e;border-bottom:none;background:#000}
+.elevator-shaft svg{position:absolute;inset:0;width:100%;height:100%}
+.elevator-head{transform-box:fill-box;transform-origin:50% 100%;animation:elevator-tilt .09s ease-out 2.9s forwards}
+.elevator-door{position:absolute;top:0;bottom:0;width:50.2%;background:linear-gradient(105deg,#ffffff22,transparent 30%,#00000033),repeating-linear-gradient(90deg,#8d9396 0 2px,#a7aeb1 2px 5px,#7d8487 5px 6px);box-shadow:inset 0 0 8vh #0008;border:.3vh solid #3e4549}
+.elevator-left{left:0;animation:elevator-open-l .5s ease-in-out 1.65s forwards,elevator-shut-l .07s cubic-bezier(.6,0,1,.6) 3.15s forwards}
+.elevator-right{right:0;animation:elevator-open-r .5s ease-in-out 1.65s forwards,elevator-shut-r .07s cubic-bezier(.6,0,1,.6) 3.15s forwards}
+@keyframes elevator-lit{0%,98%{color:#fff0ae;background:#ffd24a55;text-shadow:0 0 1.2vh #ffd24a,0 0 3vh #ff9d00}100%{color:#5b4413;background:#00000022;text-shadow:none}}
+@keyframes elevator-last{to{color:#ff9a8a;background:#a8120a88;text-shadow:0 0 1.2vh #ff3a22,0 0 3vh #c21408}}
+@keyframes elevator-tilt{to{transform:rotate(var(--tilt))}}
+@keyframes elevator-open-l{to{transform:translateX(-102%)}}
+@keyframes elevator-open-r{to{transform:translateX(102%)}}
+@keyframes elevator-shut-l{from{transform:translateX(-102%)}to{transform:none}}
+@keyframes elevator-shut-r{from{transform:translateX(102%)}to{transform:none}}
+@keyframes elevator-shake{0%,100%{translate:0 0}25%{translate:-1.4vh .8vh}55%{translate:1.2vh -.8vh}80%{translate:-.6vh .4vh}}
+@keyframes elevator-out{to{opacity:0}}
+
+/* ---- morgue */
+.scare-morgue{background:#05080a;animation:morgue-out .3s linear 3s forwards}
+.morgue-wall{position:absolute;inset:0;display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(3,1fr);gap:1.4vh;padding:4vh 7vw;background:radial-gradient(ellipse at 50% 15%,#2c4753,#030608 78%);animation:morgue-shake .5s linear 2.55s}
+.morgue-cell{position:relative}
+.morgue-bay{position:absolute;inset:0;background:#010203;border:.4vh solid #1e2a30}
+.morgue-door{position:absolute;inset:.3vh;display:block;background:linear-gradient(135deg,#b7c7cd 0%,#6c818b 40%,#92a6af 60%,#45575f 100%);border:.35vh solid #24313a;border-radius:1.2vh;box-shadow:inset 0 0 0 .5vh #ffffff26,0 .6vh 1.4vh #000a;transform-origin:50% 100%;animation:morgue-slam .1s ease-out calc(2.55s + var(--d)) forwards}
+.morgue-handle{position:absolute;left:50%;top:30%;width:6%;height:40%;translate:-50% 0;background:linear-gradient(90deg,#f1f6f8,#7f929b,#dfe8ec);border-radius:1vh;box-shadow:.5vh .6vh .8vh #0008}
+.morgue-tag{position:absolute;left:62%;top:14%;width:26%;height:14%;background:#d9d6c4;border:.3vh solid #24313a}
+.morgue-tray{position:absolute;left:5%;right:5%;top:96%;height:0;opacity:0;background:linear-gradient(#b6c6cc,#52646d);clip-path:polygon(3% 0,97% 0,100% 100%,0 100%);animation:morgue-tray-slam .1s ease-out calc(2.55s + var(--d)) forwards}
+.morgue-first .morgue-door{z-index:2;animation:morgue-slide 1.4s ease-in-out .7s forwards,morgue-slam .1s ease-out calc(2.55s + var(--d)) forwards}
+.morgue-first .morgue-tray{animation:morgue-tray-slide 1.4s ease-in-out .7s forwards,morgue-tray-slam .1s ease-out calc(2.55s + var(--d)) forwards}
+.morgue-flash{position:absolute;inset:0;background:#dcf4ff;opacity:0;animation:morgue-flash .18s linear 2.55s}
+@keyframes morgue-slide{to{transform:scale(1.12) translateY(3%);box-shadow:inset 0 0 0 .5vh #ffffff26,0 2vh 3vh #000}}
+@keyframes morgue-tray-slide{to{opacity:1;height:38%}}
+@keyframes morgue-slam{to{transform:scale(1.2) translateY(7%) rotate(var(--tilt));box-shadow:inset 0 0 0 .5vh #ffffff26,0 2.6vh 4vh #000}}
+@keyframes morgue-tray-slam{to{opacity:1;height:70%}}
+@keyframes morgue-flash{0%{opacity:.8}100%{opacity:0}}
+@keyframes morgue-shake{0%,100%{translate:0 0}15%{translate:-1.4vh 1vh}35%{translate:1.4vh -1vh}55%{translate:-1vh -.6vh}75%{translate:.7vh .6vh}}
+@keyframes morgue-out{to{opacity:0}}
+
+/* ---- cat */
+.scare-cat{background:#000;animation:cat-out .3s linear 3.2s forwards}
+.cat-room{position:absolute;inset:0;overflow:hidden}
+.cat-wall{position:absolute;inset:0;background:radial-gradient(ellipse 62% 75% at 44% 55%,#b19b62,#6e5e39 46%,#17140c 100%);animation:cat-flicker 1.5s steps(1) forwards}
+.cat-floor{position:absolute;left:0;right:0;bottom:0;height:17vh;background:linear-gradient(#2c261a,#050403)}
+.cat-door{position:absolute;right:11vw;bottom:17vh;width:24vh;height:52vh;background:linear-gradient(#fff8d6,#ebdc9f);border:1.4vh solid #120f09;box-shadow:0 0 14vh #fff3b080;overflow:hidden}
+.cat-sit{position:absolute;left:50%;bottom:0;height:46%;translate:-50% 0;visibility:hidden;animation:cat-show .01s linear 2.35s forwards}
+.cat-paw{animation:cat-lick .55s ease-in-out 2.45s 3}
+.cat-tongue{animation:cat-tongue .55s steps(1) 2.45s 3}
+.cat-shadow{position:absolute;left:5vw;bottom:15vh;height:88vh;width:auto;transform-origin:50% 100%;transform:scale(.8,.04);animation:cat-rise 1.45s cubic-bezier(.3,.1,.5,1) .05s forwards,cat-gone .01s linear 1.55s forwards}
+.cat-leap{position:absolute;inset:0;margin:auto;height:100vh;width:auto;visibility:hidden;scale:.06;translate:34vw 16vh;animation:cat-jump .8s linear 1.55s forwards,cat-away .12s ease-in 2.3s forwards}
+.cat-eyes{filter:drop-shadow(0 0 1.2vh #76ff3a) drop-shadow(0 0 3vh #3cc216)}
+.cat-dim{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 45%,#000b 100%)}
+@keyframes cat-flicker{0%{filter:brightness(1)}30%{filter:brightness(.72)}38%{filter:brightness(1)}70%{filter:brightness(.7)}76%,100%{filter:brightness(1)}}
+@keyframes cat-rise{to{transform:scale(1,1)}}
+@keyframes cat-gone{to{visibility:hidden}}
+@keyframes cat-jump{0%{scale:.06;translate:34vw 16vh;visibility:visible}16%{scale:1;translate:0 0}28%{translate:-1vh .8vh}40%{translate:1vh -.8vh}52%{translate:-.8vh -.6vh}64%{translate:.8vh .6vh}100%{scale:1.22;translate:0 0;visibility:visible}}
+@keyframes cat-away{from{scale:1.22;translate:0 0;visibility:visible}to{scale:.06;translate:34vw 16vh;visibility:hidden}}
+@keyframes cat-show{to{visibility:visible}}
+@keyframes cat-lick{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(12deg)}}
+@keyframes cat-tongue{0%{opacity:0}50%{opacity:1}}
+@keyframes cat-out{to{opacity:0}}
+
+/* ---- belly */
+.scare-belly{background:#000;animation:belly-out .3s linear 3.2s forwards}
+.belly-room{position:absolute;inset:0;animation:belly-shake .45s linear 2.35s}
+.belly-bed{position:absolute;inset:0;width:100%;height:100%}
+.belly-swell{transform-box:view-box;transform-origin:1000px 612px;animation:belly-swell 2.05s ease-in .3s forwards}
+.belly-bump{transform-box:fill-box;transform-origin:50% 100%;opacity:0}
+.belly-bump-a{animation:belly-bump .5s ease-out 1.25s}
+.belly-bump-b{animation:belly-bump .5s ease-out 1.75s}
+.belly-tear{opacity:0;animation:belly-show .01s linear 2.35s forwards}
+.belly-pop{position:absolute;inset:0}
+.belly-monster{position:absolute;left:62.5%;top:55%;height:30vh;width:auto;translate:-50% -30%;scale:.12;transform-origin:50% 100%;visibility:hidden;animation:belly-erupt .45s cubic-bezier(.1,.9,.3,1) 2.35s forwards,belly-jitter .06s steps(2) 2.8s 7}
+.belly-goo{position:absolute;inset:0;width:100%;height:100%;opacity:0;transform:scale(.7);animation:belly-splat .09s ease-out 2.4s forwards}
+.belly-drip{transform-box:fill-box;transform-origin:50% 0;animation:belly-drip .9s ease-in calc(2.5s + var(--d)) both}
+.belly-flash{position:absolute;inset:0;background:#fff;opacity:0;animation:belly-flash .14s linear 2.35s}
+@keyframes belly-swell{to{transform:scale(1.28)}}
+@keyframes belly-bump{0%{opacity:0;transform:scale(.2)}30%{opacity:1;transform:scale(1.25)}70%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.5)}}
+@keyframes belly-show{to{opacity:1}}
+@keyframes belly-erupt{0%{visibility:visible;scale:.12;translate:-50% -30%}100%{visibility:visible;scale:3.2;translate:calc(-50% - 12vw) calc(-50% - 8vh)}}
+@keyframes belly-jitter{0%{rotate:-3deg}100%{rotate:3deg}}
+@keyframes belly-splat{to{opacity:1;transform:none}}
+@keyframes belly-drip{from{transform:scaleY(.15)}to{transform:scaleY(1)}}
+@keyframes belly-flash{0%{opacity:.8}100%{opacity:0}}
+@keyframes belly-shake{0%,100%{translate:0 0}20%{translate:-1.2vh .8vh}45%{translate:1.1vh -.9vh}70%{translate:-.6vh .4vh}}
+@keyframes belly-out{to{opacity:0}}
+
+/* ---- crawler: the overlay stays transparent, the question sheet shows through */
+.scare-crawler svg{position:absolute;inset:0;width:100%;height:100%}
+.crawler-pose{opacity:0;animation:crawler-on var(--d) steps(1,end) var(--t)}
+.crawler-wide{opacity:0;animation:crawler-on var(--d) steps(1,end) var(--t)}
+.crawler-shake{animation:crawler-shake .6s steps(1,end) var(--t)}
+.crawler-flash{position:absolute;inset:0;background:#fff;opacity:0;animation:crawler-flash 70ms steps(1,end) var(--t)}
+@keyframes crawler-on{from,to{opacity:1}}
+@keyframes crawler-shake{0%{transform:translate(0,0)}8%{transform:translate(9px,-7px)}16%{transform:translate(-8px,6px)}24%{transform:translate(6px,5px)}32%{transform:translate(-5px,-6px)}45%{transform:translate(4px,3px)}60%{transform:translate(-3px,2px)}80%{transform:translate(2px,-2px)}100%{transform:translate(0,0)}}
+@keyframes crawler-flash{from,to{opacity:.75}}

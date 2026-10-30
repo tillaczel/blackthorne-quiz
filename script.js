@@ -17,8 +17,6 @@ const TEXT = {
     endText: 'Nobody leaves until the answers have been read.',
     boo: 'Boo!',
     phew: 'Relax. Nothing happened.',
-    oops: 'Sorry. That was the doctor.',
-    behindYou: 'Look behind you',
     doneCode: 'Assessment complete',
     start: 'Begin',
     next: 'Next',
@@ -36,8 +34,6 @@ const TEXT = {
     endText: 'Niemand geht, bevor die Antworten verlesen sind.',
     boo: 'Buh!',
     phew: 'Entspannen Sie sich. Nichts passiert.',
-    oops: 'Verzeihung. Das war der Doktor.',
-    behindYou: 'Schauen Sie hinter sich',
     doneCode: 'Beurteilung abgeschlossen',
     start: 'Beginnen',
     next: 'Weiter',
@@ -46,13 +42,14 @@ const TEXT = {
 };
 
 const LOW_SECONDS = 10;
-// Sound and lights die this long before zero, so the scream lands out of silence.
+// The sound ends this long before zero, so the scare lands out of silence.
 const HUSH_MS = 650;
+// The lights start to dim here and the sound fades with them.
+const DIM_MS = 1500;
+const FADE_SECONDS = 0.85;
 
 const GHOST = '<svg viewBox="0 0 100 120" aria-hidden="true"><path d="M10 112V50a40 40 0 0 1 80 0v62l-13-12-13 12-14-12-14 12-13-12z" fill="#e8ece3"/><ellipse cx="36" cy="46" rx="7" ry="10" fill="#11140f"/><ellipse cx="64" cy="46" rx="7" ry="10" fill="#11140f"/><ellipse cx="50" cy="74" rx="9" ry="12" fill="#11140f"/></svg>';
 const BAT = '<svg viewBox="0 0 100 50" aria-hidden="true"><path d="M50 16c-3-5-3-8-3-11l3 3 3-3c0 3 0 6-3 11 4 3 8 9 12 9 4-8 16-14 36-12-8 6-11 14-11 24-6-5-12-6-17-2-3-5-8-6-11 0-2 6-7 6-9 0-3-6-8-5-11 0-5-4-11-3-17 2 0-10-3-18-11-24 20-2 32 4 36 12 4 0 8-6 12-9z" fill="#050705"/></svg>';
-const SCREAMER = '<svg viewBox="0 0 200 250" aria-hidden="true"><path d="M100 4C46 4 22 48 26 104c3 42 17 74 36 104 10 17 24 38 38 38s28-21 38-38c19-30 33-62 36-104 4-56-20-100-74-100z" fill="#d9dccb"/><path d="M38 74C50 22 150 22 162 74c-22-26-102-26-124 0zM58 150c-6 28 2 58 16 80M142 150c6 28-2 58-16 80" fill="none" stroke="#8d927c" stroke-width="4"/><path d="M34 106c6-30 52-38 64-8 4 26-14 46-36 44-18-2-30-16-28-36zM166 106c-6-30-52-38-64-8-4 26 14 46 36 44 18 2 30-16 28-36z" fill="#070806"/><circle cx="66" cy="110" r="7" fill="#ff2a1c"/><circle cx="134" cy="110" r="7" fill="#ff2a1c"/><path d="M92 136l8-14 8 14z" fill="#070806"/><path d="M62 170c8-20 68-20 76 0 8 26-14 72-38 72s-46-46-38-72z" fill="#070806"/><path d="M63 168l10 15 9-17 10 17 8-18 8 18 10-17 9 17 10-15c-14-14-60-14-74 0zM70 214l10-12 8 14 12-13 12 13 8-14 10 12c-8 14-20 24-30 24s-22-10-30-24z" fill="#d9dccb"/></svg>';
-const HAND = '<svg viewBox="0 0 120 150" aria-hidden="true"><g fill="none" stroke="#8c0f0a" stroke-width="17" stroke-linecap="round"><path d="M24 92 12 56M42 76 34 18M62 74V10M80 78 90 22M94 100l20-26"/></g><path d="M20 88c8-16 66-18 78 2 8 22-6 52-38 54-30-2-48-30-40-56z" fill="#8c0f0a"/><path d="M40 146l-3 4M70 142l4 8" stroke="#8c0f0a" stroke-width="6"/></svg>';
 const DUCK = '<svg viewBox="0 0 200 180" aria-hidden="true"><path d="M30 104c30 14 58 4 62-8 10 4 50 2 78-22 12 36 0 92-74 96-52 2-76-30-66-66z" fill="#f5c518"/><circle cx="72" cy="64" r="42" fill="#f5c518"/><path d="M34 58 2 66c4 14 22 18 38 8z" fill="#ef7d12"/><circle cx="62" cy="52" r="8" fill="#11140f"/><path d="M44 28 50 2h46l6 26z" fill="#f4f1e6"/><path d="M73 7v17M64 15h18" stroke="#b3201a" stroke-width="6"/></svg>';
 const SPIDER = '<svg viewBox="0 0 100 80" aria-hidden="true"><g fill="none" stroke="#050705" stroke-width="4" stroke-linecap="round"><path d="M38 34 18 18 6 28M36 42H14L4 54M38 50 20 62l-4 14M42 54 32 70M62 34l20-16 12 10M64 42h22l10 12M62 50l18 12 4 14M58 54l10 16"/></g><ellipse cx="50" cy="44" rx="19" ry="17" fill="#050705"/><circle cx="43" cy="42" r="7" fill="#fff"/><circle cx="58" cy="42" r="7" fill="#fff"/><circle cx="45" cy="44" r="3" fill="#050705"/><circle cx="56" cy="40" r="3" fill="#050705"/></svg>';
 
@@ -227,10 +224,10 @@ function showTime(left) {
   clock.textContent = seconds > 0 ? String(seconds) : TEXT[language].timeUp;
   const low = seconds > 0 && seconds <= LOW_SECONDS;
   document.body.classList.toggle('low-time', low);
-  document.body.classList.toggle('hush', left > 0 && left <= HUSH_MS);
+  document.body.classList.toggle('hush', left > 0 && left <= DIM_MS);
   document.body.classList.toggle('time-up', seconds === 0 && !reviewing);
+  document.body.dataset.countdown = low ? countdownNow().name : '';
   if (low) startDread(left);
-  if (low && seconds !== lastSecond) heartbeat();
   lastSecond = seconds;
   document.querySelector('#timerFill').style.transform = `scaleX(${left / (QUESTION_SECONDS * 1000)})`;
 }
@@ -259,6 +256,7 @@ function goTo(index) {
   stopDread();
   endScare();
   document.body.classList.remove('low-time', 'hush', 'time-up');
+  document.body.dataset.countdown = '';
   lastSecond = null;
   reviewing = false;
   lightsOut();
@@ -472,74 +470,45 @@ function soundReady() {
   return soundWanted && audio?.context.state === 'running';
 }
 
-function thump(at, volume) {
-  const { context } = audio;
-  const oscillator = context.createOscillator();
-  const gain = context.createGain();
-  oscillator.frequency.value = 52;
-  gain.gain.setValueAtTime(volume, at);
-  gain.gain.exponentialRampToValueAtTime(0.001, at + 0.22);
-  oscillator.connect(gain).connect(context.destination);
-  oscillator.start(at);
-  oscillator.stop(at + 0.24);
-}
+/** Each question's last seconds have their own sound, from countdowns.js. */
+const countdownNow = () => COUNTDOWNS[(slideAt(current).number - 1) % COUNTDOWNS.length];
 
-function heartbeat() {
-  if (!soundReady()) return;
-  const now = audio.context.currentTime;
-  thump(now, 0.5);
-  thump(now + 0.2, 0.34);
-}
-
-/** Rising strings and hiss for the last seconds, then dead silence just before zero. */
+/** Plays the countdown through a bus that cuts dead just before zero. */
 function startDread(left) {
   if (dread || !soundReady() || left <= HUSH_MS) return;
-  const { context, master, hiss } = audio;
+  const { context, master } = audio;
   const now = context.currentTime;
-  const hushAt = now + (left - HUSH_MS) / 1000;
-  const gain = context.createGain();
-  gain.gain.setValueAtTime(0.008, now);
-  gain.gain.exponentialRampToValueAtTime(0.09, hushAt);
-  gain.gain.setValueAtTime(0, hushAt);
-  gain.connect(context.destination);
-  master.gain.setValueAtTime(0, hushAt);
-
-  const noise = hissSource(context, hiss);
-  const noiseFilter = context.createBiquadFilter();
-  noiseFilter.type = 'highpass';
-  noiseFilter.frequency.setValueAtTime(300, now);
-  noiseFilter.frequency.exponentialRampToValueAtTime(5000, hushAt);
-  noise.connect(noiseFilter).connect(gain);
-  noise.start(now);
-
-  const voices = [1, 1.06, 1.5, 1.59].map((ratio) => {
-    const voice = context.createOscillator();
-    voice.type = 'sawtooth';
-    voice.frequency.setValueAtTime(110 * ratio, now);
-    voice.frequency.exponentialRampToValueAtTime(620 * ratio, hushAt);
-    voice.connect(gain);
-    voice.start(now);
-    return voice;
-  });
-  dread = { gain, sources: [noise, ...voices] };
+  const seconds = (left - HUSH_MS) / 1000;
+  const bus = context.createGain();
+  const countdown = countdownNow();
+  const level = countdown.level ?? 1;
+  const end = now + seconds;
+  const fadeFrom = Math.max(now, end - FADE_SECONDS);
+  bus.gain.setValueAtTime(level, now);
+  bus.gain.setValueAtTime(level, fadeFrom);
+  bus.gain.linearRampToValueAtTime(0, end);
+  bus.connect(context.destination);
+  master.gain.setValueAtTime(master.gain.value, fadeFrom);
+  master.gain.linearRampToValueAtTime(0, end);
+  countdown.sound(bus, seconds, now);
+  dread = { bus };
 }
 
 function stopDread() {
   if (!dread) return;
-  dread.sources.forEach((source) => source.stop());
-  dread.gain.disconnect();
+  dread.bus.disconnect();
   dread = null;
   if (soundWanted) playSound();
 }
 
 /** The scares all play through this, so they stay loud without clipping. */
-function scareOutput() {
+function scareOutput(level = 1) {
   const limiter = audio.context.createDynamicsCompressor();
   limiter.threshold.value = -3;
   limiter.ratio.value = 20;
   limiter.attack.value = 0.001;
   const trim = audio.context.createGain();
-  trim.gain.value = 0.55; // the limiter adds its own make-up gain
+  trim.gain.value = 0.55 * level; // the limiter adds its own make-up gain
   limiter.connect(trim).connect(audio.context.destination);
   return limiter;
 }
@@ -609,7 +578,7 @@ function patter(output, count, gap, volume) {
 }
 
 function unlockSound(event) {
-  if (soundWanted && !event.target.closest?.('#soundToggle')) playSound();
+  if (soundWanted && !dread && !event.target.closest?.('#soundToggle')) playSound();
 }
 
 soundToggle.addEventListener('click', () => {
@@ -624,6 +593,8 @@ soundToggle.addEventListener('click', () => {
 // ---- Jump scares: scares.js fills SCARES, one per question.
 
 const SCARES = [];
+const SCARE_LEVELS = {}; // measured volume trims, so every scare hits equally hard
+const COUNTDOWNS = [];
 let scareTimers = [];
 
 function later(ms, action) {
@@ -635,7 +606,8 @@ function jumpScare() {
   const scare = SCARES[(slideAt(current).number - 1) % SCARES.length];
   jumpScareNode.className = `jump-scare scare-${scare.name}`;
   jumpScareNode.innerHTML = scare.html(TEXT[language]);
-  if (soundReady()) scare.sound(scareOutput());
+  document.body.classList.toggle('scare-fade', Boolean(scare.fadeIn));
+  if (soundReady()) scare.sound(scareOutput(SCARE_LEVELS[scare.name]));
   document.body.classList.add('scare');
   later(scare.ms, endScare);
 }

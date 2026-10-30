@@ -2,19 +2,9 @@
 
 const swarm = (count, html, style) => Array.from({ length: count }, () => `<i style="${style()}">${html}</i>`).join('');
 
+const PHEW_YET = { en: 'Yet.', de: 'Noch nicht.' };
+
 SCARES.push(
-  { name: 'face', ms: 1300, html: () => SCREAMER, sound: scream },
-  {
-    name: 'hands',
-    ms: 2400,
-    html: () => [[8, 12, -14], [66, 8, 12], [20, 50, 8], [70, 50, -10], [42, 22, 3]]
-      .map(([left, top, turn], i) => `<i style="left:${left}%;top:${top}%;rotate:${turn}deg;animation-delay:${i * 0.3}s">${HAND}</i>`).join(''),
-    sound: (output) => [0, 0.3, 0.6, 0.9, 1.2].forEach((seconds) => {
-      const at = audio.context.currentTime + seconds;
-      hit(output, at);
-      burst(output, 0.09, 0.5, at);
-    }),
-  },
   {
     name: 'duck',
     ms: 1300,
@@ -25,9 +15,28 @@ SCARES.push(
   },
   {
     name: 'phew',
-    ms: 3000,
-    html: (text) => `<b>${text.phew}</b><div class="late-face">${SCREAMER}</div>`,
-    sound: (output) => later(1700, () => scream(output)),
+    ms: 2900,
+    html: (text) => `<div class="phew-pull"><b class="phew-note"><span class="phew-was">${text.phew}</span><span class="phew-now">${PHEW_YET[language]}</span>
+      <svg class="phew-hand" viewBox="0 0 400 1000" aria-hidden="true">
+        <path d="M168 -20H232L226 340L224 600L282 660L292 750H110L120 660L176 600z" fill="#d9d4c4" stroke="#0b0907" stroke-width="7" stroke-linejoin="round"/>
+        <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <g stroke="#0b0907" stroke-width="42"><path d="M150 740L128 830L116 920L142 992"/><path d="M185 750L172 850L168 950L192 1000"/><path d="M222 750L228 850L236 950L214 1000"/><path d="M258 735L282 830L296 920L272 988"/><path d="M290 690L340 750L356 830L330 850"/></g>
+          <g stroke="#d9d4c4" stroke-width="30"><path d="M150 740L128 830L116 920L142 992"/><path d="M185 750L172 850L168 950L192 1000"/><path d="M222 750L228 850L236 950L214 1000"/><path d="M258 735L282 830L296 920L272 988"/><path d="M290 690L340 750L356 830L330 850"/></g>
+          <g stroke="#8d8672" stroke-width="5"><path d="M200 -20V560M150 668Q200 690 250 668"/></g>
+        </g>
+        <g fill="#d9d4c4" stroke="#0b0907" stroke-width="5"><circle cx="128" cy="830" r="13"/><circle cx="172" cy="850" r="13"/><circle cx="228" cy="850" r="13"/><circle cx="282" cy="830" r="13"/></g>
+        <g fill="#0b0907"><path d="M130 960L116 920L148 975L142 996zM178 970L168 940L200 985L192 1004zM224 972L236 940L206 988L214 1004zM270 962L296 920L280 984z"/></g>
+      </svg></b></div>`,
+    sound: (output) => {
+      const start = audio.context.currentTime;
+      burst(output, 0.5, 0.05, start + 1.0);
+      tone(output, { type: 'sine', path: [[0, 310], [0.4, 250]], length: 0.5, volume: 0.08, at: start + 1.05, wobble: [6, 30] });
+      burst(output, 0.2, 0.3, start + 1.8);
+      tone(output, { type: 'sawtooth', path: [[0, 90], [0.3, 40]], length: 0.35, volume: 0.35, at: start + 1.85 });
+      hit(output, start + 2.0);
+      burst(output, 0.16, 0.9, start + 2.0);
+      tone(output, { type: 'square', path: [[0, 900], [0.25, 120]], length: 0.3, volume: 0.15, at: start + 2.0 });
+    },
   },
   {
     name: 'blood',
@@ -69,67 +78,6 @@ SCARES.push(
     });
     burst(output, 0.05, volume * 0.8, at);
   };
-
-  // ---- matron: three hard cuts down a corridor
-
-  const corridor = (() => {
-    const edge = (x, wall) => (wall === 'top' ? (x * 330) / 700 : 900 - (x * 340) / 700);
-    const door = (from, to, mirror) => {
-      const x = (value) => (mirror ? 1600 - value : value);
-      const [topA, topB, bottomA, bottomB] = [edge(from, 'top'), edge(to, 'top'), edge(from, 'bottom'), edge(to, 'bottom')];
-      const rise = 0.7;
-      return `<polygon points="${x(from)},${bottomA - (bottomA - topA) * rise} ${x(to)},${bottomB - (bottomB - topB) * rise} ${x(to)},${bottomB} ${x(from)},${bottomA}" fill="#060908" stroke="#2c3d35" stroke-width="5"/>`;
-    };
-    const lines = Array.from({ length: 7 }, (_, i) => `<line x1="${700 + i * 33.3}" y1="560" x2="${i * 266}" y2="900"/>`).join('');
-    return `<svg class="matron-hall" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-      <defs><radialGradient id="matronGlow" cx="800" cy="450" r="330" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#f1ffd8"/><stop offset=".3" stop-color="#a9cfa0"/><stop offset="1" stop-color="#1a2a22" stop-opacity="0"/></radialGradient></defs>
-      <rect width="1600" height="900" fill="#070a08"/>
-      <polygon points="0,0 1600,0 900,330 700,330" fill="#0f1814"/>
-      <polygon points="0,0 700,330 700,560 0,900" fill="#16221d"/>
-      <polygon points="1600,0 900,330 900,560 1600,900" fill="#16221d"/>
-      <polygon points="0,900 700,560 900,560 1600,900" fill="#1f2d26"/>
-      <g stroke="#34493f" stroke-width="3" fill="none">${lines}</g>
-      ${door(80, 250, false)}${door(330, 450, false)}${door(80, 250, true)}${door(330, 450, true)}
-      <rect x="700" y="330" width="200" height="230" fill="#c8e8bd"/>
-      <circle cx="800" cy="450" r="330" fill="url(#matronGlow)"/>
-    </svg>`;
-  })();
-
-  const NURSE = `<svg class="matron-nurse" viewBox="0 0 200 400" aria-hidden="true">
-    <g fill="#000" stroke="#2b4036" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke">
-      <path d="M88 130C44 136 6 150 2 200L4 290H26L36 262L40 300L8 392H192L160 300L164 262L174 290H196L198 200C194 150 156 136 112 130z"/>
-      <ellipse cx="70" cy="396" rx="24" ry="5"/><ellipse cx="130" cy="396" rx="24" ry="5"/>
-      <rect x="88" y="112" width="24" height="26"/>
-      <ellipse cx="100" cy="84" rx="32" ry="38"/>
-      <path d="M56 54L64 18Q100 2 136 18L144 54Q100 40 56 54z"/>
-    </g>
-    <path d="M96 18h8v18h-8zM89 25h22v6h-22z" fill="#6a100c"/>
-    <g class="matron-eyes" fill="#eaffb4"><path d="M76 77L98 85L97 92L79 90z"/><path d="M124 77L102 85L103 92L121 90z"/></g>
-    <path class="matron-mouth" d="M78 108L83 113L87 106L92 114L97 106L101 115L105 106L110 114L114 106L119 113L123 108" fill="none" stroke="#eaffb4" stroke-width="3" stroke-linejoin="miter"/>
-  </svg>`;
-
-  SCARES.push({
-    name: 'matron',
-    ms: 2900,
-    html: () => `<div class="matron-stage">${corridor}<i class="matron-dark"></i>${NURSE}<i class="matron-vignette"></i></div>`,
-    sound: (output) => {
-      const start = now();
-      voice(output, { type: 'sawtooth', freq: 52, length: 2.9, volume: 0.22 });
-      [[0.8, 0.55], [1.4, 0.8], [2.0, 1]].forEach(([seconds, volume]) => {
-        hit(output, start + seconds);
-        burst(output, 0.07, volume * 0.3, start + seconds);
-      });
-      [1, 1.5, 1.26].forEach((ratio) => tone(output, {
-        type: 'sawtooth',
-        path: [[0, 1500 * ratio], [0.12, 2500 * ratio], [0.8, 1000 * ratio]],
-        length: 0.85,
-        volume: 0.22,
-        wobble: [38, 150],
-        at: start + 2.0,
-      }));
-      burst(output, 0.7, 0.22, start + 2.0);
-    },
-  });
 
   // ---- file: typed case file and a red stamp
 
@@ -195,6 +143,7 @@ SCARES.push(
       <g class="wheelchair-wheel"><circle cx="105" cy="200" r="75" stroke-width="8"/><circle cx="105" cy="200" r="63" stroke-width="3"/><g stroke-width="2.5">${spokes}</g><circle cx="105" cy="200" r="9" fill="#0b0c0b"/></g>
       <path d="M40 62L66 68L84 168"/>
       <path d="M92 124H186M182 124L184 168"/>
+      <rect class="wheelchair-cushion" x="76" y="146" width="112" height="18" rx="6" fill="#3b3f3a" stroke-width="3"/>
       <path d="M72 168H192" stroke-width="12"/>
       <path d="M192 170L242 226"/><path d="M232 226H268"/><path d="M236 226L240 254"/>
       <circle cx="240" cy="256" r="20" stroke-width="5" fill="#0b0c0b"/>
@@ -211,7 +160,18 @@ SCARES.push(
       <path d="M110 180L100 252M190 180L200 252"/>
       <path d="M86 256H116M184 256H214"/>
     </g>
-    <g class="wheelchair-eyes" fill="#ff2a14" transform="translate(150 106) scale(1.35) translate(-150 -106)"><path d="M107 92L136 102L134 114L110 108z"/><path d="M193 92L164 102L166 114L190 108z"/></g></svg>`;
+<defs><linearGradient id="wheelchairWrist" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e4e0d2" stop-opacity="0"/><stop offset="1" stop-color="#e4e0d2"/></linearGradient></defs>
+    <rect class="wheelchair-cushion-front" x="76" y="152" width="148" height="12" rx="5" fill="#3b3f3a" stroke="#aab1a8" stroke-width="3"/>
+    <g class="wheelchair-hands"><g fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M77 70V108" stroke="url(#wheelchairWrist)" stroke-width="16"/>
+        <g stroke="#050505" stroke-width="12"><path d="M65 118L65 150"/><path d="M73 118L73 153"/><path d="M81 118L81 150"/><path d="M89 118L89 153"/><path d="M77 112V118" stroke-width="30"/></g>
+        <g stroke="#e4e0d2" stroke-width="8"><path d="M65 118L65 150"/><path d="M73 118L73 153"/><path d="M81 118L81 150"/><path d="M89 118L89 153"/><path d="M77 112V118" stroke-width="26"/></g>
+        <g stroke="#6f6a5a" stroke-width="1.5"><path d="M68 134H86M68 140H86"/></g></g><g fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M223 70V108" stroke="url(#wheelchairWrist)" stroke-width="16"/>
+        <g stroke="#050505" stroke-width="12"><path d="M235 118L235 150"/><path d="M227 118L227 153"/><path d="M219 118L219 150"/><path d="M211 118L211 153"/><path d="M223 112V118" stroke-width="30"/></g>
+        <g stroke="#e4e0d2" stroke-width="8"><path d="M235 118L235 150"/><path d="M227 118L227 153"/><path d="M219 118L219 150"/><path d="M211 118L211 153"/><path d="M223 112V118" stroke-width="26"/></g>
+        <g stroke="#6f6a5a" stroke-width="1.5"><path d="M214 134H232M214 140H232"/></g></g></g>
+  </svg>`;
 
   SCARES.push({
     name: 'wheelchair',
@@ -224,16 +184,18 @@ SCARES.push(
         voice(output, { freq: 1500 + i * 70, to: 2300 + i * 90, length: 0.24, volume: 0.17, at: start + 0.12 + i * 0.42 });
         voice(output, { type: 'triangle', freq: 3000, to: 4600, length: 0.2, volume: 0.04, at: start + 0.14 + i * 0.42 });
       }
-      hit(output, start + 2.3);
-      burst(output, 0.18, 0.4, start + 2.3);
-      [1, 1.5].forEach((ratio) => tone(output, {
-        type: 'sawtooth', path: [[0, 2600 * ratio], [0.4, 500 * ratio]], length: 0.5, volume: 0.22, wobble: [28, 120], at: start + 2.3,
-      }));
-      tone(output, { type: 'sawtooth', path: [[0, 70], [0.8, 38]], length: 0.9, volume: 0.45, at: start + 2.3 });
+      // someone invisible sits: the cushion creaks down, springs groaning
+      voice(output, { type: 'sawtooth', freq: 190, to: 95, length: 0.7, volume: 0.1, at: start + 1.95 });
+      voice(output, { type: 'square', freq: 520, to: 340, length: 0.5, volume: 0.04, at: start + 2.05 });
+      voice(output, { type: 'sawtooth', freq: 130, to: 210, length: 0.35, volume: 0.07, at: start + 2.3 });
+      burst(output, 0.5, 0.05, start + 2.0);
+      hit(output, start + 2.74);
+      burst(output, 0.18, 0.5, start + 2.74);
+      tone(output, { type: 'sawtooth', path: [[0, 70], [0.8, 38]], length: 0.9, volume: 0.45, at: start + 2.74 });
     },
   });
 
-  // ---- flatline: the monitor, then the spike with teeth
+  // ---- flatline: the monitor, then the words
 
   const SWEEP = 1.7;
   const BEATS = [[100, 140, 1], [270, 150, 1], [400, 150, 0.8], [500, 155, 0.6], [580, 150, 0.5], [645, 145, 0.4], [700, 140, 0.35], [745, 90, 0.3], [785, 40, 0.3]];
@@ -242,31 +204,29 @@ SCARES.push(
     const path = BEATS.map(([x, height, width]) => offsets.map(([dx, dy]) => `L${(x + dx * width).toFixed(1)} ${200 + (dy === null ? -height : dy)}`).join(' ')).join(' ');
     return `M0 200 ${path} L1000 200`;
   })();
-  /** A jagged jaw edge: tooth tips of uneven depth, shifted by half a tooth so the two jaws interlock. */
-  const teeth = (depths, shift) => {
-    const step = 10;
-    const points = ['-10,-40', '110,-40'];
-    for (let i = 0; i < 12; i += 1) {
-      const right = 110 - shift - i * step;
-      points.push(`${right},22`, `${right - step / 2},${22 + depths[i % depths.length]}`);
-    }
-    return points.join(' ');
-  };
-  const jaw = (name, depths, shift) => `<svg class="flatline-jaw ${name}" viewBox="0 0 100 50" preserveAspectRatio="none" aria-hidden="true"><polygon points="${teeth(depths, shift)}" fill="#08331a" stroke="#58ff86" stroke-width="5" stroke-linejoin="miter" vector-effect="non-scaling-stroke"/></svg>`;
+  const FLAT_WORDS = { en: 'HE IS AWAKE', de: 'ER IST WACH' };
+  const WORD_AT = 1.85;
+  const WORD_GAP = 0.07;
+  const crackLines = `<path d="M1000 400L1116 381L1239 396L1480 445L1603 438" pathLength="1" style="--i:0"/><path d="M1000 400L1171 429L1286 487L1486 531L1646 644" pathLength="1" style="--i:1"/><path d="M1000 400L1184 553L1299 616L1453 641L1577 700" pathLength="1" style="--i:2"/><path d="M1000 400L1013 524L997 718L961 899L912 1120L865 1364L855 1511" pathLength="1" style="--i:3"/><path d="M1000 400L968 552L935 710L903 909L945 1091" pathLength="1" style="--i:4"/><path d="M1000 400L864 523L777 714L657 869L525 954L341 1031" pathLength="1" style="--i:5"/><path d="M1000 400L876 409L670 468L498 604L366 750L229 861" pathLength="1" style="--i:6"/><path d="M1000 400L826 219L669 93L557 4L361 -98L132 -191L7 -241" pathLength="1" style="--i:7"/><path d="M1000 400L1038 170L1109 36L1175 -114L1350 -297L1409 -421" pathLength="1" style="--i:8"/><path d="M1000 400L972 167L913 27L787 -116L695 -244" pathLength="1" style="--i:9"/><path d="M1000 400L1198 335L1376 318L1621 376L1800 451L1962 502L2125 550" pathLength="1" style="--i:10"/>`;
 
   SCARES.push({
     name: 'flatline',
     ms: 3400,
     html: () => `<div class="flatline-stage"><div class="flatline-line"><svg viewBox="0 0 1000 400" aria-hidden="true"><path d="${trace}" fill="none" stroke="#4dff7e" stroke-width="5" stroke-linejoin="round"/></svg></div>
-      <i class="flatline-spike"></i>${jaw('up', [20, 28, 18, 26, 22, 28, 16], 0)}${jaw('down', [26, 18, 28, 20, 24, 16, 28], 5)}</div>`,
+      <i class="flatline-flat"></i><p class="flatline-words">${[...say(FLAT_WORDS)].map((letter, i) => `<s style="--at:${(WORD_AT + i * WORD_GAP).toFixed(2)}s;--tilt:${randomRange(-5, 5).toFixed(1)}deg;--lift:${randomRange(-1.5, 1.5).toFixed(1)}vh">${letter === ' ' ? '&nbsp;' : letter}</s>`).join('')}</p>
+      <svg class="flatline-crack" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><g fill="none" stroke-linecap="round" stroke-linejoin="round">${crackLines}</g></svg></div>`,
     sound: (output) => {
       const start = now();
       BEATS.forEach(([x]) => voice(output, { freq: 1000, length: 0.07, volume: 0.3, at: start + (x / 1000) * SWEEP }));
       voice(output, { freq: 1000, length: 1.4, volume: 0.3, at: start + 1.42 });
-      voice(output, { type: 'sawtooth', freq: 180, to: 1700, length: 0.3, volume: 0.28, at: start + 2.0 });
+      // the line writes: a thin dry scratch for every letter
+      [...say(FLAT_WORDS)].forEach((letter, i) => {
+        if (letter !== ' ') burst(output, 0.05, 0.14, start + WORD_AT + i * WORD_GAP);
+      });
       hit(output, start + 2.8);
-      burst(output, 0.2, 0.4, start + 2.8);
-      clang(output, start + 2.8, 0.12, 140);
+      burst(output, 0.2, 0.55, start + 2.8);
+      clang(output, start + 2.8, 0.18, 520);
+      for (let i = 0; i < 6; i += 1) burst(output, 0.015, 0.4, start + 2.82 + i * 0.035);
     },
   });
 
@@ -461,107 +421,6 @@ SCARES.push(
       voice(output, { type: 'square', pitch: [[0, 1000], [0.12, 300]], level: [[0, 0.3], [0.12, 0]], at: start + 2.5 });
     },
   });
-
-  // ---- bedpan
-
-  const BEDPAN_SORRY = { en: 'sorry', de: 'Verzeihung' };
-  const BEDPAN_CLANG = { en: 'CLANG!', de: 'KLONG!' };
-  const BEDPAN = `<svg viewBox="0 0 280 170" aria-hidden="true">
-    <defs><linearGradient id="bedpan-steel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eef3f4"/><stop offset=".45" stop-color="#9aa8ad"/><stop offset="1" stop-color="#55626a"/></linearGradient></defs>
-    <path d="M226 66 256 52Q274 48 274 64V86Q274 100 256 96L228 88Z" fill="url(#bedpan-steel)" stroke="#2f383d" stroke-width="4"/>
-    <ellipse cx="257" cy="74" rx="7" ry="11" fill="#1b2023"/>
-    <path d="M14 74C14 142 62 164 128 164S242 142 242 74Z" fill="url(#bedpan-steel)" stroke="#2f383d" stroke-width="4"/>
-    <ellipse cx="128" cy="74" rx="114" ry="31" fill="#d3dcde" stroke="#2f383d" stroke-width="4"/>
-    <ellipse cx="128" cy="79" rx="92" ry="21" fill="#323a3f"/>
-    <path d="M40 100C48 132 78 150 112 154" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="7" stroke-linecap="round"/>
-    <path d="M44 62Q80 46 130 44" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="5" stroke-linecap="round"/>
-  </svg>`;
-
-  SCARES.push({
-    name: 'bedpan',
-    ms: 3400,
-    html: () => `<div class="bedpan-drop"><div class="bedpan-pan">${BEDPAN}</div></div>
-      <b class="bedpan-clang">${say(BEDPAN_CLANG)}</b><small class="bedpan-sorry">${say(BEDPAN_SORRY)}</small>`,
-    sound: (output) => {
-      const start = now();
-      const land = start + 0.32;
-      // the clang and a smaller second one off the bounce
-      ring(output, 470, 0.5, land, 1.1);
-      voice(output, { pitch: [[0, 190], [0.2, 60]], level: [[0, 0.8], [0.22, 0]], at: land });
-      rush(output, { at: land, level: [[0, 0.5], [0.05, 0]], sweep: ['highpass', 1, [[0, 2000]]] });
-      ring(output, 520, 0.22, land + 0.27, 0.5);
-      // the spin: clinks that come closer and closer, under a rising whirr
-      const spin = land + 0.3;
-      let gap = 0.35;
-      let at = spin;
-      for (let k = 0; gap > 0.014; k += 1) {
-        const fade = Math.max(0.25, 1 - k * 0.05);
-        voice(output, { type: 'triangle', pitch: [[0, randomRange(1500, 2400)], [0.05, randomRange(1100, 1500)]], level: [[0, 0.3 * fade], [0.05, 0]], at });
-        rush(output, { at, level: [[0, 0.22 * fade], [0.02, 0]], sweep: ['bandpass', 3, [[0, 3000]]] });
-        at += gap;
-        gap *= 0.8;
-      }
-      voice(output, { type: 'sawtooth', pitch: [[0, 140], [at - spin, 1500]], level: [[0, 0], [at - spin - 0.1, 0.1], [at - spin + 0.1, 0]], at: spin, filter: ['bandpass', 4, 900] });
-      rush(output, { at: at - 0.1, level: [[0, 0], [0.1, 0.18], [0.35, 0]], sweep: ['bandpass', 2, [[0, 5000], [0.35, 1500]]] });
-    },
-  });
-
-  // ---- clown
-
-  const CLOWN_HONK = { en: 'HONK!', de: 'TÜÜT!' };
-  const CLOWN = `<svg class="clown-svg" viewBox="0 0 300 432" aria-hidden="true">
-    <path d="M30 412V372Q30 306 108 292H192Q270 306 270 372V412Z" fill="#eef0ea" stroke="#9aa09a" stroke-width="4"/>
-    <ellipse cx="150" cy="418" rx="112" ry="13" fill="#7c868c" stroke="#3f484d" stroke-width="4"/>
-    <path d="M112 292 150 362 188 292" fill="#d9ddd4" stroke="#9aa09a" stroke-width="3"/>
-    <rect x="198" y="352" width="46" height="40" rx="4" fill="none" stroke="#b9beb5" stroke-width="3"/><path d="M210 352v-22M224 352v-16M236 352v-20" stroke="#1d6fd6" stroke-width="5" stroke-linecap="round"/>
-    <path d="M100 290C84 380 112 410 150 410S216 380 200 290" fill="none" stroke="#1d2126" stroke-width="8" stroke-linecap="round"/>
-    <circle cx="150" cy="412" r="16" fill="#cfd5d9" stroke="#1d2126" stroke-width="5"/>
-    <path d="M150 300 112 282V318ZM150 300 188 282V318Z" fill="#d8231c" stroke="#7a0f0c" stroke-width="3"/><circle cx="150" cy="300" r="9" fill="#a8140f"/>
-    <rect x="124" y="250" width="52" height="50" fill="#e9e5d6"/>
-    <g fill="#e8431f" stroke="#8d230e" stroke-width="3"><circle cx="60" cy="112" r="30"/><circle cx="42" cy="152" r="32"/><circle cx="58" cy="196" r="28"/><circle cx="240" cy="112" r="30"/><circle cx="258" cy="152" r="32"/><circle cx="242" cy="196" r="28"/><circle cx="86" cy="70" r="24"/><circle cx="214" cy="70" r="24"/></g>
-    <ellipse cx="150" cy="168" rx="92" ry="108" fill="#f5f2e8" stroke="#aaa493" stroke-width="4"/>
-    <path d="M64 120Q150 52 236 120" fill="none" stroke="#2a2d31" stroke-width="10"/>
-    <circle cx="150" cy="86" r="30" fill="#d7dde0" stroke="#2a2d31" stroke-width="6"/><circle cx="150" cy="86" r="8" fill="#15181b"/><path d="M130 72Q138 64 150 62" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
-    <g fill="#1d6fd6" stroke="#0b3f86" stroke-width="3"><path d="M106 124l11 18-11 18-11-18Z"/><path d="M194 124l-11 18 11 18 11-18Z"/></g>
-    <g fill="#fff" stroke="#15181b" stroke-width="5"><ellipse cx="108" cy="162" rx="19" ry="23"/><ellipse cx="192" cy="162" rx="19" ry="23"/></g>
-    <circle cx="112" cy="166" r="7.5" fill="#15181b"/><circle cx="188" cy="166" r="7.5" fill="#15181b"/>
-    <path d="M82 122Q106 100 130 120M170 120Q194 100 218 122" fill="none" stroke="#15181b" stroke-width="8" stroke-linecap="round"/>
-    <circle cx="86" cy="214" r="17" fill="#f0a2a0" opacity=".7"/><circle cx="214" cy="214" r="17" fill="#f0a2a0" opacity=".7"/>
-    <circle class="clown-nose" cx="150" cy="206" r="26" fill="#e2171c" stroke="#8b0b10" stroke-width="3"/><ellipse cx="142" cy="197" rx="8" ry="5" fill="#fff" opacity=".7"/>
-    <path class="clown-smile" d="M116 250Q150 272 184 250" fill="none" stroke="#c4151b" stroke-width="9" stroke-linecap="round"/>
-    <g class="clown-grin">
-      <defs><clipPath id="clown-lips"><path d="M34 236Q150 280 266 236Q150 372 34 236Z"/></clipPath></defs>
-      <path d="M34 236Q150 280 266 236Q150 372 34 236Z" fill="#1b0508"/>
-      <g clip-path="url(#clown-lips)"><path d="M34 240Q150 284 266 240" fill="none" stroke="#fff" stroke-width="30"/><path d="M34 252Q150 296 266 252" fill="none" stroke="#fff" stroke-width="18"/><path d="M70 236v36M100 244v36M130 248v38M150 249v38M170 248v38M200 244v36M230 236v36" stroke="#2a1014" stroke-width="3"/><ellipse cx="150" cy="318" rx="60" ry="30" fill="#a8242c"/></g>
-      <path d="M34 236Q150 280 266 236Q150 372 34 236Z" fill="none" stroke="#c4151b" stroke-width="9" stroke-linejoin="round"/>
-    </g>
-  </svg>`;
-  const SPRING = `<svg class="clown-spring" viewBox="0 0 100 200" preserveAspectRatio="none" aria-hidden="true">
-    <path d="M18 0H82L18 26H82L18 52H82L18 78H82L18 104H82L18 130H82L18 156H82L18 182H82L50 200" fill="none" stroke="#5e686e" stroke-width="12" stroke-linejoin="round"/>
-    <path d="M18 0H82L18 26H82L18 52H82L18 78H82L18 104H82L18 130H82L18 156H82L18 182H82L50 200" fill="none" stroke="#b8c2c7" stroke-width="5" stroke-linejoin="round"/>
-  </svg>`;
-
-  SCARES.push({
-    name: 'clown',
-    ms: 2800,
-    html: () => `<div class="clown-pop"><div class="clown-body">${CLOWN}</div>${SPRING}</div>
-      <b class="clown-honk clown-honk-one">${say(CLOWN_HONK)}</b><b class="clown-honk clown-honk-two">${say(CLOWN_HONK)}</b>`,
-    sound: (output) => {
-      const start = now();
-      // boing: a sine that sweeps up and then wobbles itself down
-      voice(output, { pitch: [[0, 120], [0.07, 700], [0.9, 150]], level: [[0, 1.2], [0.3, 0.9], [0.9, 0]], at: start, vibrato: [13, 520] });
-      rush(output, { at: start, level: [[0, 0.3], [0.06, 0]], sweep: ['lowpass', 1, [[0, 900]]] });
-      // two nose honks
-      [[0.7, 330, 0.2], [1.12, 395, 0.3]].forEach(([seconds, hertz, length]) => {
-        voice(output, { type: 'sawtooth', pitch: [[0, hertz], [length, hertz * 1.06]], level: [[0, 0], [0.012, 1], [length - 0.03, 0.9], [length, 0]], at: start + seconds, filter: ['bandpass', 2.2, hertz * 2.6] });
-        voice(output, { type: 'square', pitch: [[0, hertz / 2], [length, hertz / 2]], level: [[0, 0], [0.012, 0.5], [length, 0]], at: start + seconds });
-      });
-      // the grin stretches
-      voice(output, { type: 'triangle', pitch: [[0, 260], [0.32, 1900]], level: [[0, 0.22], [0.3, 0.12], [0.34, 0]], at: start + 1.55 });
-      voice(output, { type: 'sawtooth', pitch: [[0, 160], [0.8, 75]], level: [[0, 0], [0.1, 0.3], [0.8, 0]], at: start + 1.6, filter: ['lowpass', 1, 500] });
-    },
-  });
-
 }
 
 // Group c: the screen itself goes wrong. crash, rip, eye, letters, lockdown.
@@ -630,13 +489,15 @@ SCARES.push(
     en: { title: 'PATIENT.EXE has stopped responding.', sub: 'Your soul is being uploaded...', code: 'Stop code: NO_EXIT_FOUND' },
     de: { title: 'PATIENT.EXE reagiert nicht mehr.', sub: 'Ihre Seele wird hochgeladen...', code: 'Stoppcode: KEIN_AUSGANG_GEFUNDEN' },
   };
-  const crashEye = (flip) => `<svg viewBox="0 0 100 60" aria-hidden="true"${flip ? ' style="scale:-1 1"' : ''}><clipPath id="crash-clip"><path d="M3 30Q50-12 97 30Q50 72 3 30Z"/></clipPath><path d="M3 30Q50-12 97 30Q50 72 3 30Z" fill="#f2efe2"/><g clip-path="url(#crash-clip)"><circle cx="50" cy="30" r="17" fill="#e8d36a"/><ellipse cx="50" cy="30" rx="4" ry="15" fill="#070806"/><path d="M0 0H100V38L0 12Z" fill="#030c3c"/></g><path d="M3 30Q50-12 97 30Q50 72 3 30Z" fill="none" stroke="#02103d" stroke-width="3"/></svg>`;
+  const CRASH_HELLO = { en: 'HELLO. I CAN SEE YOU.', de: 'HALLO. ICH SEHE SIE.' };
+  const HELLO_AT = 2.05;
+  const HELLO_GAP = 0.045;
   const crashLetters = (line) => line.split(' ').map((word) => `<span class="crash-word">${[...word]
     .map((letter) => `<i style="--dx:${randomRange(-9, 9).toFixed(1)}vw;--r:${randomRange(-90, 90).toFixed(0)}deg;--d:${randomRange(0, 0.55).toFixed(2)}s">${escapeHtml(letter)}</i>`).join('')}</span>`).join(' ');
 
   SCARES.push({
     name: 'crash',
-    ms: 3400,
+    ms: 3300,
     html: () => {
       const text = say(CRASH);
       return `<div class="crash-screen">
@@ -646,18 +507,25 @@ SCARES.push(
         <div class="crash-row"><div class="crash-bar crash-drop" style="--dx:-3vw;--r:-5deg"><u></u></div><div class="crash-pct" style="--dx:4vw;--r:12deg"></div></div>
         <p class="crash-code">${crashLetters(text.code)}</p>
       </div>
-      <div class="crash-eyes">${crashEye(false)}${crashEye(true)}</div>`;
+      <div class="crash-term"><p class="crash-boot">C:\\PATIENT&gt; reboot</p><p class="crash-hello">${[...say(CRASH_HELLO)].map((letter, i) => `<s style="--at:${(HELLO_AT + i * HELLO_GAP).toFixed(3)}s">${letter === ' ' ? '&nbsp;' : letter}</s>`).join('')}<u></u></p></div>`;
     },
     sound: (output) => {
-      // Error ding-dong, the bar ticking up, a stuck buzz when it freezes, then the hum.
+      // Error ding-dong, the bar ticking up, a stuck buzz when it freezes, then a reboot and a cold keyboard.
       beep(output, { at: soon(0), freq: [880], length: 0.13, volume: 0.1 });
       beep(output, { at: soon(0.14), freq: [660], length: 0.2, volume: 0.1 });
       for (let i = 0; i < 9; i += 1) burst(output, 0.02, 0.12, soon(0.08 + i * 0.1));
       beep(output, { at: soon(0.95), freq: [330], length: 0.55, volume: 0.06 });
-      tone(output, { path: [[0, 46], [1.8, 38]], length: 1.9, volume: 0.9, at: soon(1.5) });
-      tone(output, { type: 'sawtooth', path: [[0, 69], [1.8, 57]], length: 1.9, volume: 0.22, wobble: [3, 25], at: soon(1.5) });
-      for (let i = 0; i < 16; i += 1) burst(output, 0.02, 0.07, soon(1.7 + i * 0.045 + randomRange(0, 0.04)));
-      tone(output, { path: [[0, 110], [0.5, 42]], length: 0.6, volume: 0.55, at: soon(2.15) });
+      rush(output, { at: soon(1.9), freq: [[0, 6000], [0.15, 800]], q: 1, level: [[0, 0.3], [0.15, 0]] });
+      tone(output, { path: [[0, 52], [1.2, 50]], length: 1.25, volume: 0.25, at: soon(1.95) });
+      [...say(CRASH_HELLO)].forEach((letter, i) => {
+        if (letter === ' ') return;
+        const at = soon(HELLO_AT + i * HELLO_GAP);
+        burst(output, 0.012, 0.22, at);
+        beep(output, { at, type: 'square', freq: [1700, 900], length: 0.03, volume: 0.04 });
+      });
+      tone(output, { path: [[0, 120], [0.5, 40]], length: 0.6, volume: 0.95, at: soon(3.1) });
+      tone(output, { type: 'sawtooth', path: [[0, 900], [0.3, 80]], length: 0.3, volume: 0.25, at: soon(3.1) });
+      burst(output, 0.25, 0.9, soon(3.1));
     },
   });
 
@@ -753,64 +621,6 @@ SCARES.push(
       rush(output, { freq: [[0, 900], [0.2, 400]], q: 2, level: [[0, 0], [0.03, 0.3], [0.2, 0]], at: soon(1.9) });
       tone(output, { type: 'sawtooth', path: [[0, 41], [1.7, 31]], length: 1.8, volume: 0.55, wobble: [6, 50], at: soon(1.15) });
       tone(output, { path: [[0, 33], [1.7, 28]], length: 1.8, volume: 0.8, at: soon(1.15) });
-    },
-  });
-
-  // ---- letters: the question falls off the sheet, then something breathes and it all comes back
-
-  let lettersPlan = [];
-
-  SCARES.push({
-    name: 'letters',
-    ms: 3400,
-    html: () => {
-      lettersPlan = [];
-      const sheet = document.querySelector('.sheet');
-      const question = sheet?.querySelector('.question');
-      const node = question?.firstChild;
-      if (!node || node.nodeType !== Node.TEXT_NODE) return '';
-      const css = getComputedStyle(question);
-      const area = question.getBoundingClientRect();
-      const floor = sheet.getBoundingClientRect().bottom - window.innerHeight * 0.025;
-      const range = document.createRange();
-      const glyphs = [];
-      [...node.data].forEach((char, index) => {
-        if (!char.trim()) return;
-        range.setStart(node, index);
-        range.setEnd(node, index + 1);
-        const box = range.getBoundingClientRect();
-        if (box.width) glyphs.push({ char, box });
-      });
-      const spans = glyphs.map(({ char, box }, index) => {
-        const delay = 0.1 + 0.85 * (index / glyphs.length) ** 1.15 + randomRange(0, 0.03);
-        const drop = Math.max(20, floor - box.height - randomRange(0, box.height * 0.7) - box.top);
-        const duration = 0.3 + 0.5 * Math.sqrt(drop / 900);
-        const back = 2.75 + randomRange(0, 0.18);
-        lettersPlan.push(delay + duration * 0.76);
-        return `<i style="left:${box.left}px;top:${box.top}px;height:${box.height}px;line-height:${box.height}px;--dx:${randomRange(-0.8, 0.8) * box.height}px;--dy:${drop}px;--rot:${randomRange(-110, 110)}deg;--fall:${duration}s;--d1:${delay}s;--d2:${back}s">${escapeHtml(char)}</i>`;
-      }).join('');
-      const font = `font-family:${css.fontFamily.replace(/"/g, "'")};font-size:${css.fontSize};font-weight:${css.fontWeight};font-style:${css.fontStyle};color:${css.color}`;
-      return `<div class="letters-ink" style="${font}">${spans}</div>
-        <div class="letters-mist" style="left:${area.left}px;top:${area.top}px;width:${area.width}px;height:${Math.max(area.height, 120)}px"></div>`;
-    },
-    sound: (output) => {
-      hit(output);
-      burst(output, 0.07, 0.4);
-      // Letters clattering down like dropped wooden tiles.
-      lettersPlan.forEach((seconds) => {
-        const at = soon(seconds);
-        burst(output, 0.02, randomRange(0.15, 0.4), at);
-        if (Math.random() < 0.45) {
-          tone(output, { path: [[0, randomRange(500, 1300)], [0.05, randomRange(300, 700)]], length: 0.06, volume: 0.18, at });
-        }
-      });
-      // A breath in, a whisper out.
-      rush(output, { freq: [[0, 1700], [1.0, 1100]], q: 0.9, level: [[0, 0], [0.32, 0.7], [0.45, 0.1], [0.6, 0.9], [1.0, 0]], at: soon(1.8) });
-      rush(output, { freq: [[0, 3400], [1.0, 2600]], q: 1.4, level: [[0, 0], [0.32, 0.3], [0.45, 0.05], [0.6, 0.4], [1.0, 0]], at: soon(1.8) });
-      tone(output, { path: [[0, 96], [0.9, 78]], length: 1.0, volume: 0.4, wobble: [5, 30], at: soon(1.9) });
-      // And back they fly.
-      rush(output, { freq: [[0, 600], [0.5, 3200]], q: 0.8, level: [[0, 0], [0.15, 0.5], [0.5, 0]], at: soon(2.72) });
-      for (let i = 0; i < 28; i += 1) burst(output, 0.015, randomRange(0.15, 0.3), soon(2.95 + i * 0.012 + randomRange(0, 0.012)));
     },
   });
 
@@ -1165,14 +975,7 @@ SCARES.push(
       <path d="M-182 566L-72 474H72L182 566z" fill="#6d6b57"/>
       <!-- the sheeted body: far hump, near feet, hanging hem -->
       <path d="M-98 520Q-100 462 -62 452Q0 440 62 452Q100 462 98 520z" fill="#a9aa9c"/>
-      <g class="gurney-figure"><g class="gurney-lunge">
-        <path d="M-64 540Q-72 440 -66 412Q-40 392 0 392Q40 392 66 412Q72 440 64 540z" fill="#6f7b77"/>
-        <path d="M-40 430Q-30 480 -44 530M30 440Q40 490 28 530" stroke="#444e4b" stroke-width="5" fill="none"/>
-        <path d="M-60 418Q-90 470 -82 546M60 418Q90 470 82 546" stroke="#b9bdae" stroke-width="17" stroke-linecap="round" fill="none"/>
-        <path d="M-82 548l-8 30M-82 548l-1 34M-82 548l7 30M82 548l8 30M82 548l1 34M82 548l-7 30" stroke="#b9bdae" stroke-width="5" stroke-linecap="round"/>
-        <rect x="-13" y="370" width="26" height="34" fill="#7f8577"/>
-        ${ghoulFace()}
-      </g></g>
+      <g class="gurney-arm"><path d="M70 610L150 590L60 330L20 350z" fill="#c9cabb" stroke="#1a1a16" stroke-width="5"/><path d="M45 360L70 340M70 440L100 430" stroke="#6b6c5e" stroke-width="4"/></g>
       <path d="M-182 614L-176 562Q-150 510 -104 508Q-60 508 -12 530Q40 506 104 508Q152 510 176 562L182 614Q166 606 150 622Q130 610 110 620Q88 606 66 622Q48 610 30 626Q12 608 -10 622Q-30 608 -52 624Q-74 608 -92 624Q-116 610 -136 622Q-162 610 -182 614z" fill="url(#gurneySheet)"/>
       ${folds}
       ${stain(-70, 560, 34)}${stain(60, 540, 26, '#4c140f')}${stain(-115, 590, 16, '#6a2a1c', 0.7)}${stain(125, 585, 20, '#5b1a14', 0.7)}
@@ -1187,7 +990,13 @@ SCARES.push(
     ms: 2500,
     html: () => `<svg class="gurney-hall" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${corridor()}</svg>
       <svg class="gurney-cart" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${gurneySprite()}</svg>
-      <div class="gurney-dark"></div>`,
+      <div class="gurney-dark"></div>
+      <svg class="gurney-grab" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g fill="none" stroke-linecap="round" stroke-linejoin="round"><g stroke="#000" stroke-width="112"><path d="M640 470L540 220L505 90"/><path d="M745 440L700 150L685 0"/><path d="M850 440L875 140L895 -10"/><path d="M950 470L1040 210L1090 70"/><path d="M590 600L450 570L360 470"/></g><g stroke="#d3d4c4" stroke-width="84"><path d="M640 470L540 220L505 90"/><path d="M745 440L700 150L685 0"/><path d="M850 440L875 140L895 -10"/><path d="M950 470L1040 210L1090 70"/><path d="M590 600L450 570L360 470"/></g></g>
+        <g fill="#d3d4c4" stroke="#000" stroke-width="8"><circle cx="540" cy="220" r="22"/><circle cx="700" cy="150" r="22"/><circle cx="875" cy="140" r="22"/><circle cx="1040" cy="210" r="22"/></g>
+        <path d="M600 540Q590 420 700 410H900Q1010 420 1000 540L1020 700Q1030 830 940 890H660Q570 830 580 700z" fill="#d3d4c4" stroke="#000" stroke-width="12"/>
+        <path d="M670 600Q800 650 930 600M660 700Q800 750 940 700" fill="none" stroke="#7d7e6e" stroke-width="7" stroke-linecap="round"/>
+        <g fill="#000"><path d="M530 83L474 -26L480 97z"/><path d="M711 -3L673 -119L659 3z"/><path d="M921 -7L911 -129L869 -13z"/><path d="M1114 79L1130 -43L1066 61z"/><path d="M379 453L280 381L341 487z"/></g></svg>`,
     sound: (output) => {
       note(output, { type: 'sawtooth', path: [[0, 38], [1.95, 70]], length: 2, volume: 0.25, wobble: [7, 60] });
       rush(output, { type: 'lowpass', path: [[0, 160], [1.9, 700]], length: 2, volume: 0.4, attack: 0.05, hold: 0.9 });
@@ -1197,23 +1006,14 @@ SCARES.push(
       }
       [0.05, 0.55, 1.1, 1.5].forEach((s, i) => note(output, { type: 'sine', path: [[0, 2100 + i * 120], [0.22, 2650], [0.45, 2250]], length: 0.46, volume: 0.07 + i * 0.03, wobble: [9, 40] }, s));
       rush(output, { type: 'bandpass', path: [[0, 500], [0.22, 3800]], q: 0.9, length: 0.3, volume: 0.9, start: 1.52, attack: 0.02, hold: 0.7 });
-      note(output, { type: 'sawtooth', path: [[0, 140], [0.28, 520]], length: 0.3, volume: 0.35, wobble: [40, 120] }, 1.52);
+      note(output, { type: 'sawtooth', path: [[0, 140], [0.28, 520]], length: 0.3, volume: 0.1, wobble: [40, 120] }, 1.52);
+      thud(output, 1.55, 0.5);
       thud(output, 1.98, 1);
       burst(output, 0.35, 0.9, audio.context.currentTime + 1.98);
     },
   });
 
   // ---- bedsheet: an iron bed, a sheet, a breath.
-  const sheetFigure = () => {
-    const folds = [[-95, -520, -110, -40], [-50, -560, -62, -10], [10, -600, 8, -20], [58, -540, 70, -30], [100, -480, 118, -50]]
-      .map(([x1, y1, x2, y2]) => `<path d="M${x1} ${y1}Q${(x1 + x2) / 2 + rand(-14, 14)} ${(y1 + y2) / 2} ${x2} ${y2}" fill="none" stroke="rgba(8,14,18,.3)" stroke-width="${f1(rand(2, 5))}" stroke-linecap="round"/>`).join('');
-    return `<path d="M-150 0C-140 -180 -120 -330 -118 -470C-116 -540 -64 -566 -60 -600C-96 -640 -84 -722 0 -724C84 -722 96 -640 60 -600C64 -566 116 -540 118 -470C120 -330 140 -180 152 0L120 -14L98 4L66 -12L30 6L-4 -10L-40 6L-76 -12L-106 4z" fill="url(#bedsheetCloth)"/>
-      <path d="M-150 0C-140 -180 -120 -330 -118 -470C-116 -540 -64 -566 -60 -600C-96 -640 -84 -722 0 -724" fill="none" stroke="rgba(190,215,230,.35)" stroke-width="3"/>
-      ${folds}
-      <path d="M-70 -300C-50 -270 -40 -240 -48 -200M40 -340C60 -300 62 -260 52 -230" fill="none" stroke="rgba(8,14,18,.3)" stroke-width="12" stroke-linecap="round"/>
-      <path d="${blobPath(-70, -150, 30, 0.1, true)}" fill="#3a1411" opacity=".6"/>`;
-  };
-
   const wardRoom = () => {
     const bars = (x0, x1, y0, y1, n) => Array.from({ length: n }, (_, i) => `<path d="M${f1(x0 + ((x1 - x0) * i) / (n - 1))} ${y0}V${y1}" stroke="#1b2022" stroke-width="7"/>`).join('');
     return `<defs>
@@ -1253,34 +1053,7 @@ SCARES.push(
     <ellipse cx="900" cy="620" rx="270" ry="14" fill="#0c0f0e" opacity=".8"/>`;
   };
 
-  SCARES.push({
-    name: 'bedsheet',
-    ms: 3300,
-    html: () => {
-      const face = `<g class="bedsheet-face">
-        <ellipse cx="-27" cy="-670" rx="24" ry="38" fill="url(#bedsheetHole)" transform="rotate(14 -27 -670)"/><ellipse cx="27" cy="-670" rx="24" ry="38" fill="url(#bedsheetHole)" transform="rotate(-14 27 -670)"/>
-        <ellipse cx="0" cy="-585" rx="32" ry="82" fill="url(#bedsheetHole)"/>
-        <path d="M-62 -690Q-30 -700 -8 -660M62 -690Q30 -700 8 -660M-34 -640Q0 -520 34 -640" fill="none" stroke="rgba(190,215,230,.25)" stroke-width="3"/></g>`;
-      return `<svg class="bedsheet-room" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${wardRoom()}
-        <g transform="translate(1190 790)"><g class="bedsheet-lunge"><g class="bedsheet-pose"><g class="bedsheet-breath">${sheetFigure()}</g>${face}</g></g></g>
-      </svg><div class="bedsheet-dark"></div>`;
-    },
-    sound: (output) => {
-      note(output, { path: [[0, 52], [3, 48]], length: 3, volume: 0.22 }, 0);
-      [0, 1.35].forEach((s) => {
-        rush(output, { type: 'bandpass', path: [[0, 380], [0.6, 900]], q: 0.7, length: 0.65, volume: 0.28, start: s, attack: 0.3, hold: 0.7 });
-        rush(output, { type: 'bandpass', path: [[0, 800], [0.7, 300]], q: 0.7, length: 0.75, volume: 0.22, start: s + 0.62, attack: 0.1, hold: 0.3 });
-      });
-      note(output, { type: 'sawtooth', path: [[0, 150], [0.5, 210], [0.9, 130]], length: 0.9, volume: 0.17, wobble: [11, 70] }, 1.55);
-      for (let i = 0; i < 14; i += 1) burst(output, 0.03, 0.18, audio.context.currentTime + 1.55 + i * 0.06 + rand(0, 0.04));
-      rush(output, { type: 'highpass', path: [[0, 2000], [0.2, 5000]], length: 0.3, volume: 0.5, start: 2.66, attack: 0.1 });
-      for (const ratio of [1, 1.5, 2.1]) {
-        note(output, { type: 'sawtooth', path: [[0, 880 * ratio], [0.25, 1500 * ratio], [0.9, 1100 * ratio]], length: 0.95, volume: 0.2, wobble: [47, 110] }, 2.7);
-      }
-      thud(output, 2.7, 0.8);
-      rush(output, { type: 'highpass', path: [[0, 1500], [0.9, 3500]], length: 0.9, volume: 0.4, start: 2.7, attack: 0.01 });
-    },
-  });
+  globalThis.wardRoomArt = wardRoom;
 
   // ---- surgeon
   const surgeonLamp = () => {
@@ -1604,14 +1377,69 @@ SCARES.push(
       note(output, { type: 'sawtooth', path: [[0, 90], [0.35, 45]], length: 0.4, volume: 0.6, wobble: [30, 200] }, 2.7);
     },
   });
+  // ---- lights: the ward goes dark one lamp at a time, coming towards us
+  const LIGHT_DEPTHS = [0.08, 0.14, 0.24, 0.42, 0.72, 1.3];
+  const wardPoint = (x, y, depth) => `${f1(800 + x * depth)} ${f1(400 + y * depth)}`;
+  const wardQuad = (near, far, x1, y1, x2, y2, fill) => `<polygon fill="${fill}" points="${wardPoint(x1, y1, near)} ${wardPoint(x2, y2, near)} ${wardPoint(x2, y2, far)} ${wardPoint(x1, y1, far)}"/>`;
+  const wardSegment = (index) => {
+    const far = LIGHT_DEPTHS[index];
+    const near = LIGHT_DEPTHS[index + 1];
+    const mid = (far + near) / 2;
+    const door = (side) => wardQuad(mid * 1.16, mid * 0.86, side, 480, side, -190, '#1c241f');
+    return `<g class="lights-segment" style="animation-delay:${f1(0.35 * (index + 1))}s">
+      ${wardQuad(near, far, -900, 480, 900, 480, '#5f6e60')}
+      ${wardQuad(near, far, -900, -420, 900, -420, '#a6b3a0')}
+      ${wardQuad(near, far, -900, -420, -900, 480, '#7d8c7b')}
+      ${wardQuad(near, far, 900, -420, 900, 480, '#7d8c7b')}
+      ${door(-900)}${door(900)}
+      <ellipse cx="800" cy="${f1(400 - 410 * mid)}" rx="${f1(170 * mid)}" ry="${f1(30 * mid)}" fill="#f6f7dc"/>
+      <ellipse cx="800" cy="${f1(400 + 470 * mid)}" rx="${f1(420 * mid)}" ry="${f1(70 * mid)}" fill="#c9d3bb" opacity=".45"/>
+    </g>`;
+  };
+
+  /** A jittered grid of small eye pairs, each opening at its own moment in 2.2-3.0 s. */
+  const lightsEyes = () => {
+    const cols = 22;
+    const rows = 13;
+    let out = '';
+    for (let row = 0; row < rows; row += 1) {
+      for (let col = 0; col < cols; col += 1) {
+        const size = randomRange(1.3, 3.2);
+        const left = ((col + randomRange(0.05, 0.85)) / cols) * 100;
+        const top = ((row + randomRange(0.1, 0.85)) / rows) * 100;
+        out += `<i style="left:${f1(left)}%;top:${f1(top)}%;--w:${f1(size)}vw;--d:${(2.2 + randomRange(0, 0.8)).toFixed(2)}s"></i>`;
+      }
+    }
+    return out;
+  };
+
+  SCARES.push({
+    name: 'lights',
+    ms: 3500,
+    html: () => `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <rect width="1600" height="900" fill="#000"/>
+      ${[0, 1, 2, 3, 4].map(wardSegment).join('')}
+    </svg><div class="lights-eyes">${lightsEyes()}</div>`,
+    sound: (output) => {
+      note(output, { type: 'sawtooth', path: [[0, 100], [1.75, 96]], length: 1.8, volume: 0.05 });
+      [0.35, 0.7, 1.05, 1.4, 1.75].forEach((start, index) => {
+        thud(output, start, 0.3 + index * 0.1);
+        burst(output, 0.03, 0.3, audio.context.currentTime + start);
+      });
+      // hundreds of eyes opening in the dark: dry little ticks, then every one blinks and the shriek hits
+      for (let i = 0; i < 40; i += 1) burst(output, 0.012, 0.05 + 0.1 * (i / 40), audio.context.currentTime + 2.2 + (i / 40) * 0.9);
+      later(3100, () => scream(output));
+    },
+  });
+
 }
 
 // One scare per question, mixing the frightening with the silly. Pouring blood closes the assessment.
 const SCARE_ORDER = [
-  'gurney', 'invoice', 'hands', 'syringe', 'duck',
-  'cctv', 'eye', 'bedpan', 'matron', 'rip',
+  'gurney', 'invoice', 'lights', 'syringe', 'duck',
+  'cctv', 'eye', 'xray', 'mirror', 'rip',
   'file', 'surgeon', 'teeth', 'phew', 'crash',
-  'door', 'clown', 'bedsheet', 'letters', 'flatline',
-  'face', 'lockdown', 'wheelchair', 'scratches', 'blood',
+  'door', 'cat', 'belly', 'elevator', 'flatline',
+  'morgue', 'lockdown', 'wheelchair', 'scratches', 'blood',
 ];
-SCARES.splice(0, SCARES.length, ...SCARE_ORDER.map((name) => SCARES.find((scare) => scare.name === name)));
+// xray.js loads last and applies this order once its two scares exist.
