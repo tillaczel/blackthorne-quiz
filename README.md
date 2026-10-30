@@ -8,7 +8,7 @@ Each question has a 60-second timer. When it runs out the slide stays put: only 
 
 ## Running the quiz
 
-- **Next:** Next button, right arrow, Space or Page Down (a presentation clicker works).
+- **Next:** Next button, right arrow, Space, Enter or Page Down (a presentation clicker works).
 - **Back:** Back button, left arrow or Page Up. Going back to a question restarts its timer.
 - **Language:** the DE/EN button switches at any time, without touching the timer.
 - **Sound:** clinic ambience starts on the first tap or key press. The bars button mutes it.
@@ -18,8 +18,9 @@ Each question has a 60-second timer. When it runs out the slide stays put: only 
 
 - The lights cut out for a moment between slides.
 - Eyes blink in the dark, and ghosts, bats and a spider appear every 7–15 seconds. They stay behind the sheet, so they never cover a question.
-- In the last 10 seconds the room pulses red, the eyes turn red and a heartbeat plays. At zero a ghost jumps out and shouts Boo.
-- Each sheet has a doctor's note or a stamp, and a faint scrawl. These lists are at the top of `script.js`.
+- In the last 10 seconds the room pulses red, the eyes turn red, a heartbeat plays and a shrieking noise builds. Just before zero the sound and lights cut out. At zero comes a jump scare, then a ghost pops up and shouts Boo. The bars button mutes the sound.
+- Each question has its own jump scare, 25 in all, listed in `SCARE_ORDER` at the bottom of `scares.js`. After it a ghost floats on a dark screen until the host moves on. Left arrow then shows the question again; left once more goes back a slide.
+- Each sheet has its own doctor's note or stamp and a faint scrawl, from `data/flavour.json`.
 
 All slides use the same sheet, so the question always starts in the same place.
 
@@ -28,7 +29,10 @@ All slides use the same sheet, so the question always starts in the same place.
 - `index.html` — page structure
 - `styles.css` — scene, fog, lamp flicker and slide design
 - `script.js` — slides, timer, language, sound and animations
+- `scares.js`, `scares.css` — the jump scares
 - `data/questions.json` — the questions and answers, in English and German
+- `data/flavour.json` — the doctor's notes, stamps and scrawls, one each per sheet
+- `data/SOURCES.md` — where the factual answers come from
 - `assets/blackthorn-corridor.jpg` — background, compressed from the invitation's image
 - `tests/questions.test.mjs` — checks the question file: `node --test`
 
@@ -37,8 +41,8 @@ All slides use the same sheet, so the question always starts in the same place.
 Edit `data/questions.json`, keeping this shape:
 
 ```json
-{ "question": "Who wrote Frankenstein?", "answer": "Mary Shelley",
-  "de": { "question": "Wer schrieb «Frankenstein»?", "answer": "Mary Shelley" } }
+{ "category": "The Basement Cinema", "question": "Who wrote Frankenstein?", "answer": "Mary Shelley",
+  "de": { "category": "Kino im Keller", "question": "Wer schrieb «Frankenstein»?", "answer": "Mary Shelley" } }
 ```
 
 The slides follow the number of questions in the file. To change the timer, set `QUESTION_SECONDS` at the top of `script.js`.

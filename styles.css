@@ -48,7 +48,7 @@ h1{margin:0;color:var(--paper);font-size:clamp(46px,min(8vw,15vh),190px);font-we
 .doctor-note{margin:0;font:italic clamp(13px,min(1.15vw,2vh),25px) var(--type);color:#5f5a48;text-align:right}
 .stamp{flex:none;padding:.2em .6em;color:var(--red);border:4px double currentColor;font:clamp(13px,min(1.35vw,2.3vh),30px) var(--type);text-transform:uppercase;transform:rotate(-5deg);animation:stamp .34s cubic-bezier(.3,1.5,.6,1) .45s backwards}
 .sheet .question{position:relative;z-index:1;margin:0;min-height:0;font-size:clamp(26px,min(4.8vw,8.4vh),170px);font-weight:600;line-height:1.05}
-.scrawl{position:absolute;right:5%;bottom:26%;color:rgba(123,23,21,.15);font:clamp(30px,min(6.5vw,12vh),210px)/1 var(--type);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;transform:rotate(-5deg);pointer-events:none;user-select:none}
+.scrawl{position:absolute;right:5%;bottom:26%;color:rgba(123,23,21,.15);font:clamp(20px,min(4.1vw,7.4vh),150px) var(--type);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;transform:rotate(-5deg);pointer-events:none;user-select:none}
 .sheet-bottom{position:relative;z-index:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-end}
 .clock{font:clamp(46px,min(6vw,11vh),170px)/1 var(--type);color:var(--ink);transform-origin:left bottom}
 .timer{flex:none;height:clamp(8px,1.2vh,18px);margin-top:12px;background:rgba(17,20,15,.2);overflow:hidden}
@@ -63,8 +63,11 @@ body.low-time .eyes i,body.time-up .eyes i{background:#ff3b2c;box-shadow:0 0 16p
 /* Ghost that jumps out from behind the sheet, and the ones that peek round it. */
 .boo{position:absolute;z-index:1;top:0;right:9%;width:clamp(84px,15vh,190px);transform:translateY(8%);visibility:hidden}
 .boo svg,.peeker svg,.drifter svg{display:block;width:100%;height:auto}
+.boo-time{position:absolute;top:104%;left:50%;margin:0;color:var(--paper);font:clamp(26px,6vh,72px) var(--type);text-transform:uppercase;white-space:nowrap;transform:translateX(-50%);animation:boo-flicker 2.3s steps(1) infinite}
 .boo-bubble{position:absolute;top:2%;right:104%;padding:.2em .55em;color:var(--ink);background:var(--paper);font:clamp(18px,3.4vh,44px) var(--type);box-shadow:0 8px 20px #000;transform:rotate(-6deg);white-space:nowrap}
-body.time-up .boo{visibility:visible;animation:boo .5s cubic-bezier(.2,1.7,.5,1) forwards}
+body.time-up:not(.scare) .sheet{visibility:hidden}
+body.time-up:not(.scare) .boo{visibility:visible;z-index:3;top:50%;right:auto;left:50%;width:clamp(120px,34vh,420px);margin:calc(clamp(120px,34vh,420px)*-.75) 0 0 calc(clamp(120px,34vh,420px)*-.5);animation:boo-haunt 3.2s ease-in-out infinite}
+body.time-up:not(.scare) .boo svg{animation:boo-glow 1.6s ease-in-out infinite alternate}
 .peeker{position:absolute;z-index:1;width:clamp(70px,13vh,170px);animation:6s ease-in-out both}
 .peek-left{left:0;animation-name:peek-left}.peek-right{right:0;animation-name:peek-right}
 
@@ -84,6 +87,12 @@ body.time-up .boo{visibility:visible;animation:boo .5s cubic-bezier(.2,1.7,.5,1)
 
 .blackout{position:fixed;inset:0;z-index:9;background:#000;opacity:0;pointer-events:none}
 .blackout.flash{animation:lights-out .42s linear}
+body.hush .blackout{opacity:1}
+.jump-scare{position:fixed;inset:0;z-index:8;display:none;place-items:center;overflow:hidden;pointer-events:none}
+body.scare .jump-scare{display:grid}
+.jump-scare svg{display:block}
+.jump-scare b{font:400 clamp(26px,min(6vw,11vh),130px)/1.1 var(--type);text-align:center}
+.jump-scare>i{position:absolute;display:block}
 
 footer{position:relative;z-index:2;flex:none;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;padding:14px clamp(16px,4vw,64px) calc(18px + env(safe-area-inset-bottom))}
 .nav-button{display:block;min-width:clamp(110px,12vw,220px);min-height:clamp(48px,6vh,68px);padding:10px 18px;color:var(--paper);border:1px solid rgba(230,220,194,.45);background:rgba(5,7,5,.6);font:clamp(13px,1.1vw,20px) var(--type);text-transform:uppercase;letter-spacing:.12em}
@@ -99,7 +108,9 @@ footer{position:relative;z-index:2;flex:none;display:grid;grid-template-columns:
 @keyframes answer-in{from{opacity:0;filter:blur(7px)}}
 @keyframes clock-shake{0%,100%{transform:translate(0,0) rotate(0)}25%{transform:translate(-2px,1px) rotate(-.7deg)}75%{transform:translate(2px,-1px) rotate(.7deg)}}
 @keyframes heartbeat{0%,45%,100%{opacity:.35}12%{opacity:1}24%{opacity:.5}34%{opacity:.85}}
-@keyframes boo{from{transform:translateY(8%)}to{transform:translateY(-46%)}}
+@keyframes boo-haunt{0%,100%{transform:translate(-9%,3%) rotate(-5deg)}25%{transform:translate(0,-5%) rotate(2deg)}50%{transform:translate(9%,3%) rotate(5deg)}75%{transform:translate(0,-5%) rotate(-2deg)}}
+@keyframes boo-glow{from{filter:drop-shadow(0 0 8px rgba(230,236,220,.25))}to{filter:drop-shadow(0 0 34px rgba(230,236,220,.75))}}
+@keyframes boo-flicker{0%,41%,47%,100%{opacity:1}42%,46%{opacity:.25}}
 @keyframes peek-left{0%,100%{transform:translateX(0) rotate(0)}22%,74%{transform:translateX(-78%) rotate(-13deg)}48%{transform:translateX(-66%) rotate(-7deg)}}
 @keyframes peek-right{0%,100%{transform:translateX(0) rotate(0)}22%,74%{transform:translateX(78%) rotate(13deg)}48%{transform:translateX(66%) rotate(7deg)}}
 @keyframes eyes-blink{0%,90%,94%,100%{opacity:.85}91%,93%{opacity:0}}
