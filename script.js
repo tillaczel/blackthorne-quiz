@@ -273,10 +273,12 @@ function goBack() {
   document.body.classList.remove('time-up');
 }
 
-/** Next never skips a running clock: it cuts to the last seconds, so the scare still plays. */
+/** Next steps through a question: to the last seconds, to the scare, to its aftermath, then on. */
 function goNext() {
+  if (document.body.classList.contains('scare')) return skipScare();
   if (!countdown) return goTo(current + 1);
-  endsAt = Math.min(endsAt, Date.now() + LOW_SECONDS * 1000);
+  const lastSeconds = Date.now() + LOW_SECONDS * 1000;
+  endsAt = timeLeft > LOW_SECONDS * 1000 ? lastSeconds : Date.now();
 }
 
 backButton.addEventListener('click', goBack);
@@ -502,6 +504,7 @@ function scareOutput(level = 1) {
   limiter.ratio.value = 20;
   limiter.attack.value = 0.001;
   const trim = audio.context.createGain();
+  scareSound = trim;
   trim.gain.value = 0.55 * level; // the limiter adds its own make-up gain
   limiter.connect(trim).connect(audio.context.destination);
   return limiter;
@@ -597,6 +600,8 @@ const SCARE_LEVELS = {}; // measured volume trims, so every scare hits equally h
 const AFTERMATHS = {}; // scare name to the html of the looping scene that follows it
 const COUNTDOWNS = [];
 let scareTimers = [];
+let activeScare = null;
+let scareSound = null;
 
 function later(ms, action) {
   scareTimers.push(setTimeout(action, ms));
@@ -607,6 +612,7 @@ function jumpScare() {
   const scare = SCARES[(slideAt(current).number - 1) % SCARES.length];
   jumpScareNode.className = `jump-scare scare-${scare.name}`;
   jumpScareNode.innerHTML = scare.html(TEXT[language]);
+  activeScare = scare;
   document.body.classList.toggle('scare-fade', Boolean(scare.fadeIn));
   if (soundReady()) scare.sound(scareOutput(SCARE_LEVELS[scare.name]));
   document.body.classList.add('scare');
@@ -615,30 +621,26 @@ function jumpScare() {
 
 /** After the scare its aftermath loops until the host moves on. */
 function holdScare(scare) {
-  const aftermath = AFTERMATHS[scare.name];
-  if (aftermath) {
-    jumpScareNode.className = `jump-scare after-${scare.name}`;
-    jumpScareNode.innerHTML = aftermath(TEXT[language]);
-    document.body.classList.remove('scare');
-    document.body.classList.add('hold', 'aftermath');
-    return;
-  }
-  jumpScareNode.className = 'jump-scare';
-  void jumpScareNode.offsetWidth; // restarts its animations
-  jumpScareNode.className = `jump-scare scare-${scare.name}`;
-  jumpScareNode.innerHTML = scare.html(TEXT[language]);
+  jumpScareNode.className = `jump-scare after-${scare.name}`;
+  jumpScareNode.innerHTML = AFTERMATHS[scare.name](TEXT[language]);
+  document.body.classList.remove('scare');
   document.body.classList.add('hold');
-  jumpScareNode.getAnimations({ subtree: true }).forEach((animation) => {
-    animation.pause();
-    animation.currentTime = scare.holdAt ?? scare.ms * 0.7;
-  });
-  requestAnimationFrame(() => document.body.classList.add('creep'));
+}
+
+function stopScareSound() {
+  scareTimers.forEach(clearTimeout);
+  scareTimers = [];
+  scareSound?.disconnect();
+}
+
+function skipScare() {
+  stopScareSound();
+  holdScare(activeScare);
 }
 
 function endScare() {
-  scareTimers.forEach(clearTimeout);
-  scareTimers = [];
-  document.body.classList.remove('scare', 'hold', 'creep', 'aftermath');
+  stopScareSound();
+  document.body.classList.remove('scare', 'hold');
 }
 
 // ---- Start

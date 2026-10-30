@@ -85,9 +85,6 @@ body.hush .blackout{opacity:1;transition:opacity .85s ease-in}
 body.scare-fade .blackout{transition:opacity .4s ease-out}
 .jump-scare{position:fixed;inset:0;z-index:8;display:none;place-items:center;overflow:hidden;pointer-events:none}
 body.scare .jump-scare{display:grid}
-body.hold #jumpScare{transition:scale 40s linear}
-body.creep #jumpScare{scale:1.14}
-body.hold:not(.aftermath) .blackout{animation:hold-breathe 6s ease-in-out infinite}
 body.hold .jump-scare{display:grid;background:#000;animation:after-in .7s ease-out}
 .jump-scare svg{display:block}
 .jump-scare b{font:400 clamp(26px,min(6vw,11vh),130px)/1.1 var(--type);text-align:center}
@@ -118,5 +115,4 @@ footer{position:relative;z-index:2;flex:none;display:grid;grid-template-columns:
 @keyframes lights-out{0%,30%{opacity:1}36%{opacity:.25}42%{opacity:.95}58%{opacity:.5}100%{opacity:0}}
 @media(max-width:720px){.doctor-note{display:none}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-@keyframes hold-breathe{0%,100%{opacity:.1}45%{opacity:.5}48%{opacity:.18}52%{opacity:.46}}
 @keyframes after-in{from{opacity:0}}

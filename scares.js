@@ -2071,24 +2071,13 @@ const SCARE_ORDER = [
 
 // These open on a scene, so they rise out of the dark. The others strike at once.
 const SCARE_FADE_IN = ['gurney', 'lights', 'cctv', 'xray', 'mirror', 'cat', 'belly', 'elevator', 'flatline', 'morgue', 'wheelchair', 'phew'];
-// The frame each scare freezes on until the host moves on, in ms: a finished moment, not a blur.
-const SCARE_HOLDS = {
-  gurney: 1875, invoice: 2100, lights: 2800, syringe: 1875, duck: 975,
-  cctv: 2700, eye: 2600, xray: 2600, mirror: 2800, rip: 2100,
-  file: 2800, surgeon: 2400, teeth: 2600, phew: 1700, crash: 3100,
-  door: 2175, cat: 2500, belly: 2900, elevator: 2900, flatline: 3200,
-  morgue: 2200, lockdown: 2550, wheelchair: 3200, scratches: 2900, blood: 2400,
-};
-SCARES.forEach((scare) => {
-  scare.fadeIn = SCARE_FADE_IN.includes(scare.name);
-  scare.holdAt = SCARE_HOLDS[scare.name];
-});
+SCARES.forEach((scare) => { scare.fadeIn = SCARE_FADE_IN.includes(scare.name); });
 
 // Measured trims, so every scare hits equally hard.
 Object.assign(SCARE_LEVELS, {
-  gurney: 0.81, invoice: 1.19, lights: 0.69, syringe: 1.09, duck: 2.05,
-  cctv: 0.87, eye: 0.84, xray: 0.75, mirror: 0.66, rip: 0.81,
-  file: 0.86, surgeon: 0.93, teeth: 0.84, phew: 0.72, crash: 0.74,
-  door: 0.79, cat: 0.78, belly: 0.67, elevator: 0.55, flatline: 0.73,
-  morgue: 0.57, lockdown: 1.29, wheelchair: 0.83, scratches: 0.8, blood: 1.16,
+  gurney: 0.57, invoice: 1.12, lights: 0.55, syringe: 0.84, duck: 2.23,
+  cctv: 0.7, eye: 0.75, xray: 0.62, mirror: 0.52, rip: 0.74,
+  file: 0.69, surgeon: 0.8, teeth: 0.99, phew: 0.64, crash: 0.64,
+  door: 0.67, cat: 0.66, belly: 0.63, elevator: 0.56, flatline: 0.68,
+  morgue: 0.48, lockdown: 1.56, wheelchair: 0.69, scratches: 0.69, blood: 1.15,
 });
